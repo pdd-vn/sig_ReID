@@ -12,8 +12,9 @@ dataset
       ...
 ```
 ## Train
-* Reconfig `train.sh` if needed, set `OUTPUT_DIR` in `train.sh` to your output directory.    
-* run `sh train.sh`.  
+* Reconfig `train.sh` if needed, see 'config/' for default configs and 'configs/' for some particular configs.  
+* Remember to set `OUTPUT_DIR` in `train.sh` to your output directory.   
+* Run `sh train.sh`.  
 
 ## Test
 * Open `test.py`, pass your model path to `Sig_Ver_Model` when create a new one.  
