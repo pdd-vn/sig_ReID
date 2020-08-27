@@ -57,7 +57,7 @@ _C.INPUT.PROB = 0.5
 # Random probability for random erasing
 _C.INPUT.RE_PROB = 0.5
 # Values to be used for image normalization
-_C.INPUT.PIXEL_MEAN = [0.485, 0.456, 0.406]
+_C.INPUT.PIXEL_MEAN = [0.5, 0.5, 0.5]
 # Values to be used for image normalization
 _C.INPUT.PIXEL_STD = [0.229, 0.224, 0.225]
 # Value of padding size

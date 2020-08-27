@@ -81,9 +81,11 @@ class Bottleneck(nn.Module):
         if self.downsample is not None:
             residual = self.downsample(x)
 
+
         out += residual
         out = self.relu(out)
-
+        import psutil
+        print(psutil.virtual_memory().percent)
         return out
 
 

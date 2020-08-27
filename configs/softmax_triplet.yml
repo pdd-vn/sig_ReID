@@ -1,6 +1,6 @@
 MODEL:
-  PRETRAIN_CHOICE: 'self'
-  PRETRAIN_PATH: '/content/drive/My Drive/training/sig_ReID/resnet50_model_30.pth'
+  PRETRAIN_CHOICE: 'imagenet'
+  PRETRAIN_PATH: '/content/drive/My Drive/resnet50.pth'
   METRIC_LOSS_TYPE: 'triplet'
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'no'
@@ -9,8 +9,8 @@ MODEL:
 
 
 INPUT:
-  SIZE_TRAIN: [125, 250]
-  SIZE_TEST: [125, 250]
+  SIZE_TRAIN: [250, 500]
+  SIZE_TEST: [250, 500]
   PROB: 0.5 # random horizontal flip
   RE_PROB: 0.5 # random erasing
   PADDING: 10
@@ -52,16 +52,16 @@ SOLVER:
   WARMUP_METHOD: 'linear'
 
   CHECKPOINT_PERIOD: 5
-  LOG_PERIOD: 10
+  LOG_PERIOD: 40
   EVAL_PERIOD: 40
 
 TEST:
-  IMS_PER_BATCH: 128
+  IMS_PER_BATCH: 1
   RE_RANKING: 'no'
   WEIGHT: "path"
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "/content/drive/My Drive/training/sig_ReID"
+OUTPUT_DIR: "/content/drive/My Drive/training/aug_sig_ReID"
 
 

@@ -49,7 +49,7 @@ class sig(BaseImageDataset):
             if len(img_set) != 0:
                 heap.append(img_set)
                 
-        train_size = int(data_size*train_ratio)
+        train_size = int(data_size*train_ratio)*2
         gallery_size = int(data_size*gallery_ratio)
         
         train = []
@@ -60,7 +60,14 @@ class sig(BaseImageDataset):
                     if len(img_set) == 0:
                         heap.remove(img_set)
                     else:
-                        train.append(img_set.pop())
+                        choosen = img_set.pop()
+                        train.append(choosen)
+
+                        #for augmentation
+                        psuedo_path = os.path.join(choosen[0],"aug")
+                        idx = choosen[1]
+                        train.append((psuedo_path,idx))
+                        
                         if len(train) == train_size:
                             raise BREAK
             except BREAK:
