@@ -34,7 +34,7 @@ def resize_padding(cfg_size):
         else:
             pad_left_right = int((new_w - resized_w)/2)
             resized_img = T.Resize([new_h, resized_w])(img)
-            return T.Pad((pad_left_right,0))(resized_img)
+            return T.Pad((pad_left_right,0),fill=(255,255,255))(resized_img)
     return transform
         
 
