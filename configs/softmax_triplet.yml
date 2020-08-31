@@ -9,8 +9,8 @@ MODEL:
 
 
 INPUT:
-  SIZE_TRAIN: [250, 500]
-  SIZE_TEST: [250, 500]
+  SIZE_TRAIN: [125, 250]
+  SIZE_TEST: [125, 250]
   PROB: 0.5 # random horizontal flip
   RE_PROB: 0.5 # random erasing
   PADDING: 10
@@ -42,7 +42,7 @@ SOLVER:
   BIAS_LR_FACTOR: 1
   WEIGHT_DECAY: 0.0005
   WEIGHT_DECAY_BIAS: 0.0005
-  IMS_PER_BATCH: 64
+  IMS_PER_BATCH: 128
 
   STEPS: [40, 70]
   GAMMA: 0.1
@@ -56,7 +56,7 @@ SOLVER:
   EVAL_PERIOD: 40
 
 TEST:
-  IMS_PER_BATCH: 1
+  IMS_PER_BATCH: 128
   RE_RANKING: 'no'
   WEIGHT: "path"
   NECK_FEAT: 'after'
