@@ -63,7 +63,7 @@ def build_transforms(cfg, is_train=True):
         ])
     else:
         transform = T.Compose([
-            T.Resize(cfg.INPUT.SIZE_TEST),
+            resize_padding,
             T.ToTensor(),
             normalize_transform
         ])
