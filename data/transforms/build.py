@@ -50,7 +50,7 @@ def custom_transform(img, prob=0.5):
 def build_transforms(cfg, is_train=True):
     normalize_transform = T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)
     custom_tf = T.Lambda(custom_transform)
-    res_pad = T.Lambda(resize_padding)
+    res_pad = T.Lambda(resize_padding(cfg.INPUT.SIZE_TRAIN))
     if is_train:
         transform = T.Compose([
             res_pad,
@@ -63,7 +63,7 @@ def build_transforms(cfg, is_train=True):
         ])
     else:
         transform = T.Compose([
-            resize_padding,
+            res_pad,
             T.ToTensor(),
             normalize_transform
         ])
