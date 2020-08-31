@@ -53,9 +53,8 @@ def build_transforms(cfg, is_train=True):
     resize_padding = T.Lambda(resize_padding)
     if is_train:
         transform = T.Compose([
-            T.Resize(cfg.INPUT.SIZE_TRAIN),
+            resize_padding,
             T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
-            T.Pad(cfg.INPUT.PADDING),
             T.RandomCrop(cfg.INPUT.SIZE_TRAIN),
             custom_tf,
             T.ToTensor(),
