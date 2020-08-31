@@ -49,7 +49,7 @@ class sig(BaseImageDataset):
             if len(img_set) != 0:
                 heap.append(img_set)
                 
-        train_size = int(data_size*train_ratio)*2
+        train_size = int(data_size*train_ratio)
         gallery_size = int(data_size*gallery_ratio)
         
         train = []
@@ -60,8 +60,7 @@ class sig(BaseImageDataset):
                     if len(img_set) == 0:
                         heap.remove(img_set)
                     else:
-                        choosen = img_set.pop()
-                        train.append(choosen)
+                        train.append(img_set.pop())
                         if len(train) == train_size:
                             raise BREAK
             except BREAK:
