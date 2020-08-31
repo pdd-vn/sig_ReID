@@ -51,11 +51,11 @@ def make_loss_with_center(cfg, num_classes):    # modified by gu
         feat_dim = 2048
 
     if cfg.MODEL.METRIC_LOSS_TYPE == 'center':
-        center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=False)  # center loss
+        center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=True)  # center loss
 
     elif cfg.MODEL.METRIC_LOSS_TYPE == 'triplet_center':
         triplet = TripletLoss(cfg.SOLVER.MARGIN)  # triplet loss
-        center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=False)  # center loss
+        center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=True)  # center loss
 
     else:
         print('expected METRIC_LOSS_TYPE with center should be center, triplet_center'

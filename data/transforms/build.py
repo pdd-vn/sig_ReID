@@ -28,7 +28,7 @@ def resize_padding(cfg_size):
         ratio = new_h / h 
         resized_w = int(w*ratio)
         if resized_w%2 != 0:
-            reiszed_w += -1
+            resized_w += -1
         if resized_w >= new_w:
             return T.Resize([new_h, new_w])(img)
         else:
