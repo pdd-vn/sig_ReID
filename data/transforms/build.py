@@ -50,10 +50,10 @@ def custom_transform(img, prob=0.5):
 def build_transforms(cfg, is_train=True):
     normalize_transform = T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)
     custom_tf = T.Lambda(custom_transform)
-    resize_padding = T.Lambda(resize_padding)
+    res_pad = T.Lambda(resize_padding)
     if is_train:
         transform = T.Compose([
-            resize_padding,
+            res_pad,
             T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
             T.RandomCrop(cfg.INPUT.SIZE_TRAIN),
             custom_tf,
