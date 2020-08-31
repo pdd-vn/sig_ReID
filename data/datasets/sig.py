@@ -62,12 +62,6 @@ class sig(BaseImageDataset):
                     else:
                         choosen = img_set.pop()
                         train.append(choosen)
-
-                        #for augmentation
-                        psuedo_path = os.path.join(choosen[0],"aug")
-                        idx = choosen[1]
-                        train.append((psuedo_path,idx))
-                        
                         if len(train) == train_size:
                             raise BREAK
             except BREAK:
