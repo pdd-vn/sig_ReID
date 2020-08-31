@@ -84,8 +84,6 @@ class Bottleneck(nn.Module):
 
         out += residual
         out = self.relu(out)
-        import psutil
-        print(psutil.virtual_memory().percent)
         return out
 
 
