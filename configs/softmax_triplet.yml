@@ -59,9 +59,9 @@ TEST:
   IMS_PER_BATCH: 128
   RE_RANKING: 'no'
   WEIGHT: "path"
-  NECK_FEAT: 'after'
+  NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "/content/drive/My Drive/training/aug_sig_ReID"
+OUTPUT_DIR: "/content/drive/My Drive/training/sig_ReID_w/o_BN"
 
 
