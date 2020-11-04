@@ -1,7 +1,7 @@
 original repo: https://github.com/michuanhaohao/reid-strong-baseline.git  
 
 ## Prepare dataset
-* Prepare your dataset at "data/":  
+* Prepare your dataset at "data/".
 * The diretory structure should look like:  
 ```
 data
