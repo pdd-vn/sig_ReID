@@ -2,7 +2,7 @@ original repo: https://github.com/michuanhaohao/reid-strong-baseline.git
 
 ## Prepare dataset
 * Prepare your dataset at "data/":  
-* The data structure should look like:  
+* The diretory structure should look like:  
 ```
 data
   sig  
