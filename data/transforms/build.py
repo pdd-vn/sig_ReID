@@ -20,6 +20,7 @@ def augment(img):
     ], random_order=True)
     return seq(image=img)
 
+
 def resize_padding(cfg_size):
     def transform(img, size=cfg_size):
         w, h = img.size
@@ -46,6 +47,7 @@ def custom_transform(img, prob=0.5):
     aug_img = augment(img_array)
     result = Image.fromarray(aug_img)
     return result
+
 
 def build_transforms(cfg, is_train=True):
     normalize_transform = T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)

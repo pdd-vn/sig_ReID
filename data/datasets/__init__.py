@@ -12,11 +12,6 @@ from .dataset_loader import ImageDataset
 from .sig import sig
 
 __factory = {
-    'market1501': Market1501,
-    # 'cuhk03': CUHK03,
-    'dukemtmc': DukeMTMCreID,
-    'msmt17': MSMT17,
-    'veri': VeRi,
     'sig': sig,
 }
 
