@@ -25,7 +25,5 @@ data
 * Remember to set `OUTPUT_DIR` in `train.sh` to your output directory.   
 * Run `sh train.sh`.  
 
-## Test
-* Open `test.py`, pass your model path to `Sig_Ver_Model` when create a new one.  
-* Using `veirfy` to verify 2 signature images using path, or `verify2` for 2 PIL image.  
-* Using `multiple_pair_verify` to verify pairwise signature images of 2 folder.  
+## Augment data
+* Add your custom augmentation at "data/transforms/build.py"
