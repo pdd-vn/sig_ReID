@@ -27,11 +27,7 @@ def eval_func(distmat, q_pids, g_pids, q_camids=None, g_camids=None, max_rank=50
         q_pid = q_pids[q_idx]
 
         # compute cmc curve
-        # binary vector, positions with value 1 are correct matches
-        orig_cmc = matches
-        if not np.any(orig_cmc):
-            # this condition is true when query identity does not appear in gallery
-            continue
+        orig_cmc = matches[q_idx]
 
         cmc = orig_cmc.cumsum()
         cmc[cmc > 1] = 1
