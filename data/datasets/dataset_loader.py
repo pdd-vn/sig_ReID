@@ -11,40 +11,11 @@ from imgaug import augmenters as iaa
 from PIL import Image
 from torch.utils.data import Dataset
 
-# def augment(img):
-#     seq = iaa.Sequential([
-#         iaa.Affine(rotate=(-15,15)),
-#         iaa.AdditiveGaussianNoise(scale=(10,30))
-#     ], random_order=True)
-#     return seq(image=img)
-
-# def pre_processing(img):
-#     img_array = np.array(img)
-#     aug_img = augment(img_array)
-#     result = Image.fromarray(aug_img)
-#     return result
 
 def read_image(img_path):
     
     """Keep reading image until succeed.
     This can avoid IOError incurred by heavy IO process."""
-    # got_img = False
-    # while not got_img:
-    #     try:
-    #         if not osp.exists(img_path) and img_path.endswith("aug"):
-    #             img_path = img_path[:-4]
-    #             img = Image.open(img_path).convert('RGB')
-    #             img = pre_processing(img)
-    #             got_img = True
-    #         elif osp.exists(img_path):
-    #             img = Image.open(img_path).convert('RGB')
-    #             got_img = True
-    #         else:
-    #             raise IOError("{} does not exist".format(img_path))
-    #     except IOError:
-    #         print("IOError incurred when reading '{}'. Will redo. Don't worry. Just chill.".format(img_path))
-    #         pass
-    # return img
     got_img = False
     if not osp.exists(img_path):
         raise IOError("{} does not exist".format(img_path))
@@ -56,6 +27,7 @@ def read_image(img_path):
             print("IOError incurred when reading '{}'. Will redo. Don't worry. Just chill.".format(img_path))
             pass
     return img
+
 
 class ImageDataset(Dataset):
     """Image Person ReID Dataset"""

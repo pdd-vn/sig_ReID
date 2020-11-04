@@ -30,13 +30,6 @@ class sig(BaseImageDataset):
         self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
 
     def create_dataset(self, data_path, train_ratio=0.6, gallery_ratio=0.28):
-        '''
-        'data directory'--|--id1
-                          |--id2
-                          .
-                          .
-                          |--idx
-        '''
         heap = []
         data_size = 0
         for index, folder in enumerate(os.listdir(data_path)):
