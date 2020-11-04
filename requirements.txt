@@ -1,0 +1,4 @@
+pytorch
+torchvision
+ignite==0.1.2
+yacs
