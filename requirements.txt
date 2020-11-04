@@ -1,5 +1,5 @@
 pytorch
 torchvision
-ignite==0.1.2
+pytorch-ignite==0.1.2
 yacs
 imgaug
