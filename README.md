@@ -22,7 +22,7 @@ data
 ```
 ## Train
 * Reconfig `train.sh` if needed, see 'config/' for default configs and 'configs/' for some particular configs.  
-* Remember to set `OUTPUT_DIR` in `train.sh` to your output directory.   
+* Remember to set `OUTPUT_DIR` in `train.sh` to yours.
 * Run `sh train.sh`.  
 
 ## Augment data
