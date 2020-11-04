@@ -3,11 +3,6 @@
 @author:  liaoxingyu
 @contact: sherlockliao01@gmail.com
 """
-# from .cuhk03 import CUHK03
-from .dukemtmcreid import DukeMTMCreID
-from .market1501 import Market1501
-from .msmt17 import MSMT17
-from .veri import VeRi
 from .dataset_loader import ImageDataset
 from .sig import sig
 
