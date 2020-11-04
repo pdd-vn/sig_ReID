@@ -4,6 +4,7 @@ import os
 import torchvision.transforms as T
 from PIL import Image
 from mlchain.base import ServeModel
+from scipy.spatial import distance
 
 class Sig_Ver_Model():
     def __init__(self, model_path="./resnet50_model_25.pth"):
@@ -11,6 +12,7 @@ class Sig_Ver_Model():
             self.model = torch.load(model_path, map_location='cpu')
             self.model.eval()
     
+
     def build_transforms(self):
         normalize_transform = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         transform = T.Compose([
@@ -21,10 +23,14 @@ class Sig_Ver_Model():
 
         return transform
 
-    def euclid_dis(self, feat1, feat2):
-        return np.mean((feat1-feat2)**2)
 
-    def verify(self, img1_path, img2_path, threshold=0.3):   
+    def verify(self, img1_path, img2_path, threshold=0.6):   
+        '''
+        verify 2 signature using image path.
+        input: - img1_path, img2_path: path to image to verify.
+               - threshold: threshold for cosine similarity evaluation.
+        output: True/False
+        '''
         img1 = Image.open(img1_path)
         img2 = Image.open(img2_path)
         
@@ -35,16 +41,20 @@ class Sig_Ver_Model():
         feat1 = self.model(img1).detach().numpy()
         feat2 = self.model(img2).detach().numpy()
 
-        dis = self.euclid_dis(feat1, feat2)
-        if dis < threshold:
+        dis = distance.cosine(feat1, feat2)
+        if dis > threshold:
             return True, dis
         else:
             return False, dis
     
-    def verify2(self, img1, img2, threshold=0.3):   
-        # img1 = Image.open(img1_path)
-        # img2 = Image.open(img2_path)
-        
+
+    def verify2(self, img1, img2, threshold=0.6):  
+        '''
+        verify 2 signature using image file.
+        input: - img1, img2: image to verify.
+               - threshold: threshold for cosine similarity evaluation.
+        output: True/False
+        '''
         transform = self.build_transforms()
         img1 = transform(img1).unsqueeze(0)
         img2 = transform(img2).unsqueeze(0)
@@ -52,13 +62,19 @@ class Sig_Ver_Model():
         feat1 = self.model(img1).detach().numpy()
         feat2 = self.model(img2).detach().numpy()
 
-        dis = self.euclid_dis(feat1, feat2)
-        if dis < threshold:
+        dis = distance.cosine(feat1, feat2)
+        if dis > threshold:
             return True, dis
         else:
             return False, dis
 
+
     def multiple_pair_verify(self, folder1_path, folder2_path):
+        '''
+        verify signatures in 2 folders pairwises.
+        input: - folder1_path, folder2_path: path to folders to verify.
+               - threshold: threshold for cosine similarity evaluation.
+        '''
         f1_list = [img for img in os.listdir(folder1_path)]
         f2_list = [img for img in os.listdir(folder2_path)]
         
