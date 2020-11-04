@@ -12,15 +12,13 @@ import os
 
 from .bases import BaseImageDataset
 from sklearn.model_selection import train_test_split
-#from bases import BaseImageDataset
-
 
 class BREAK(Exception): pass
 
 class sig(BaseImageDataset):
     dataset_dir = 'sig'
 
-    def __init__(self, root='/content/data', verbose=True, **kwargs):
+    def __init__(self, root='./data', verbose=True, **kwargs):
         super(sig, self).__init__()
         self.dataset_dir = osp.join(root, self.dataset_dir)
         self.train, self.gallery, self.query = self.create_dataset(self.dataset_dir)
