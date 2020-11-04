@@ -1,14 +1,23 @@
 original repo: https://github.com/michuanhaohao/reid-strong-baseline.git  
-pretrained model: https://drive.google.com/drive/folders/12kdsYyit1hUn1BvrI87Swn8DAXBC9ZtP?usp=sharing
 
 ## Prepare dataset
-* Prepare your dataset at 'dataset/'.  
-* The data structure would like:  
+* Prepare your dataset at "dataset/" root directory.  
+* The data structure should look like:  
 ```
 dataset  
     sig  
-      id1  
-      id2  
+      id_1
+        sig_1
+        sig_2
+        sig_3
+        .
+        .  
+      id_2
+        sig_1
+        sig_2
+        sig_3
+        .
+        .  
       ...
 ```
 ## Train
