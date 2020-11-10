@@ -19,6 +19,7 @@ def make_data_loader(cfg):
     train_transforms = build_transforms(cfg, is_train=True)
     val_transforms = build_transforms(cfg, is_train=False)
     num_workers = cfg.DATALOADER.NUM_WORKERS
+    
     if len(cfg.DATASETS.NAMES) == 1:
         dataset = init_dataset(cfg.DATASETS.NAMES, root=cfg.DATASETS.ROOT_DIR)
     else:
@@ -27,6 +28,7 @@ def make_data_loader(cfg):
 
     num_classes = dataset.num_train_pids
     train_set = ImageDataset(cfg, dataset.train, train_transforms)
+
     if cfg.DATALOADER.SAMPLER == 'softmax':
         train_loader = DataLoader(
             train_set, batch_size=cfg.SOLVER.IMS_PER_BATCH, shuffle=True, num_workers=num_workers,

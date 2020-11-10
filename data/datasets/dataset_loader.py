@@ -21,16 +21,12 @@ def read_image(img_path):
         raise IOError("{} does not exist".format(img_path))
     while not got_img:
         try:
-            # img = Image.open(img_path).convert('RGB')
-            cv2_img = cv2.imread(img_path, 0)
-            _, cv2_img = cv2.threshold(cv2_img, 200, 255, cv2.THRESH_BINARY)
-            cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_GRAY2RGB)
-            PIL_img = Image.fromarray(cv2_img)
+            img = Image.open(img_path).convert('RGB')
             got_img = True
         except IOError:
             print("IOError incurred when reading '{}'. Will redo. Don't worry. Just chill.".format(img_path))
             pass
-    return PIL_img
+    return img
 
 
 class ImageDataset(Dataset):
@@ -48,7 +44,7 @@ class ImageDataset(Dataset):
         if len(self.dataset[index]) == 2:
             img_path, pid = self.dataset[index]
             img = read_image(img_path)
-            img = self.resize_padding(img)
+            img = self.pre_processing(img)
 
             if self.transform is not None:
                 img = self.transform(img)
@@ -56,6 +52,19 @@ class ImageDataset(Dataset):
         else:
             raise Exception("invalid dataset <Techainer>")
     
+    def pre_processing(self, img):
+        '''
+        resize padding + binarizing image.
+        '''
+        img = self.resize_padding(img)
+        img_array = np.array(img)
+        _, img_array = cv2.threshold(img_array, 200, 255, cv2.THRESH_BINARY)
+        img_array = cv2.cvtColor(cv2_img, cv2.COLOR_GRAY2RGB)
+        PIL_img = Image.fromarray(img_array)
+
+        return PIL_img
+        
+
     def resize_padding(self, img):
         '''
         resize then pad image
@@ -85,4 +94,4 @@ class ImageDataset(Dataset):
 
 if __name__=="__main__":
     img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
-    img.show()
+    import ipdb; ipdb.set_trace()
