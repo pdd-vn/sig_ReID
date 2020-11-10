@@ -24,7 +24,7 @@ class Sig_Ver_Model():
         return transform
 
 
-    def verify(self, img1_path, img2_path, threshold=0.6):   
+    def verify(self, img1_path, img2_path, threshold=0.4):   
         '''
         verify 2 signature using image path.
         input: - img1_path, img2_path: path to image to verify.
@@ -42,13 +42,13 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
-        if dis > threshold:
+        if dis < threshold:
             return True, dis
         else:
             return False, dis
     
 
-    def verify2(self, img1, img2, threshold=0.6):  
+    def verify2(self, img1, img2, threshold=0.4):  
         '''
         verify 2 signature using image file.
         input: - img1, img2: image to verify.
@@ -63,7 +63,7 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
-        if dis > threshold:
+        if dis < threshold:
             return True, dis
         else:
             return False, dis
