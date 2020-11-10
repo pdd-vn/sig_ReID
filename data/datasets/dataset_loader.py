@@ -52,6 +52,7 @@ class ImageDataset(Dataset):
         else:
             raise Exception("invalid dataset <Techainer>")
     
+    
     def pre_processing(self, img):
         '''
         resize padding + binarizing image.
