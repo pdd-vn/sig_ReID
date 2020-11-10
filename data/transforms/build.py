@@ -57,11 +57,9 @@ def build_transforms(cfg, is_train=True):
         transform = T.Compose([
             res_pad,
             T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
-            T.RandomCrop(cfg.INPUT.SIZE_TRAIN),
             custom_tf,
             T.ToTensor(),
             normalize_transform,
-            RandomErasing(probability=cfg.INPUT.RE_PROB, mean=cfg.INPUT.PIXEL_MEAN)
         ])
     else:
         transform = T.Compose([
