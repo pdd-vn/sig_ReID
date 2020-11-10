@@ -120,16 +120,10 @@ def create_supervised_evaluator(model, metrics,
     def _inference(engine, batch):
         model.eval()
         with torch.no_grad():
-            try:
-                data, pids, camids = batch
-                data = data.to(device) if torch.cuda.device_count() >= 1 else data
-                feat = model(data)
-                return feat, pids, camids
-            except:
-                data, pids, = batch
-                data = data.to(device) if torch.cuda.device_count() >= 1 else data
-                feat = model(data)
-                return feat, pids
+            data, pids, = batch
+            data = data.to(device) if torch.cuda.device_count() >= 1 else data
+            feat = model(data)
+            return feat, pids
 
     engine = Engine(_inference)
 

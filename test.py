@@ -24,7 +24,7 @@ class Sig_Ver_Model():
         return transform
 
 
-    def verify(self, img1_path, img2_path, threshold=0.4):   
+    def verify(self, img1_path, img2_path, threshold=0.3):   
         '''
         verify 2 signature using image path.
         input: - img1_path, img2_path: path to image to verify.
@@ -43,14 +43,14 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
-        dis = distance.euclidean(feat1, feat2)
+        # dis = distance.euclidean(feat1, feat2)
         if dis < threshold:
             return True, dis
         else:
             return False, dis
     
 
-    def verify2(self, img1, img2, threshold=0.4):  
+    def verify2(self, img1, img2, threshold=0.2):  
         '''
         verify 2 signature using image file.
         input: - img1, img2: image to verify.
@@ -82,6 +82,7 @@ class Sig_Ver_Model():
         f2_list = [img for img in os.listdir(folder2_path)]
         
         for img1 in f1_list:
+            print("________________________________")
             for img2 in f2_list:
                 img1_path = os.path.join(folder1_path, img1)
                 img2_path = os.path.join(folder2_path, img2)
@@ -106,5 +107,7 @@ if __name__=="__main__":
     # # Run flask model with upto 12 threads
     # FlaskServer(serve_model).run(port=5000, threads=12)
 
-    model = Sig_Ver_Model(model_path="test.pth")
-    print(model.verify("/home/pdd/Desktop/workspace/sig_ReID/sig_result/60.png", "/home/pdd/Desktop/workspace/sig_ReID/sig_result/61.png"))
+    model = Sig_Ver_Model(model_path="model_recog.pth")
+    # print(model.verify("/home/pdd/Desktop/workspace/sig_ReID/NFI-00401063.png", 
+    #                     "/home/pdd/Desktop/workspace/sig_ReID/NFI-01601033.png"))
+    model.multiple_pair_verify("test", "test")
