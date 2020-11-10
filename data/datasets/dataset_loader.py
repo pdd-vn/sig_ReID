@@ -59,7 +59,6 @@ class ImageDataset(Dataset):
         img = self.resize_padding(img)
         img_array = np.array(img)
         _, img_array = cv2.threshold(img_array, 200, 255, cv2.THRESH_BINARY)
-        img_array = cv2.cvtColor(cv2_img, cv2.COLOR_GRAY2RGB)
         PIL_img = Image.fromarray(img_array)
 
         return PIL_img
@@ -73,7 +72,7 @@ class ImageDataset(Dataset):
             raise TypeError("Only support PIL Image")
 
         w, h = img.size
-        new_h, new_w = cfg_size
+        new_h, new_w = self.size
         canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
 
         if w >= h:
@@ -90,7 +89,49 @@ class ImageDataset(Dataset):
 
         return canvas
 
+def pre_processing(img):
+    '''
+    resize padding + binarizing image.
+    '''
+    img = resize_padding(img)
+    img_array = np.array(img)
+    _, img_array = cv2.threshold(img_array, 200, 255, cv2.THRESH_BINARY)
+    # import ipdb; ipdb.set_trace()
+    PIL_img = Image.fromarray(img_array)
 
+    return PIL_img
+    
+# def resize_padding(img):
+#     '''
+#     resize then pad image
+#     :params: img: PIL.Image
+#     '''
+#     if not isinstance(img, Image.Image):
+#         raise TypeError("Only support PIL Image")
+
+#     w, h = img.size
+#     new_h, new_w = (125, 250)
+#     canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
+
+#     if w >= h:
+#         resize_ratio = new_w / w
+#     else:
+#         resize_ratio = new_h / h
+
+#     img = img.resize((math.ceil(w*resize_ratio), 
+#                         math.ceil(h*resize_ratio)), Image.BICUBIC)
+
+#     current_w, current_h = img.size
+#     canvas.paste(img, (math.ceil((new_w-current_w)/2),
+#                         math.ceil((new_h-current_h)/2)))
+
+#     return canvas
 if __name__=="__main__":
-    img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
-    import ipdb; ipdb.set_trace()
+    # img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
+    search_path = "./raw_sig/*/*.png"
+    import glob
+    for idx, path in enumerate(glob.glob(search_path)):
+        img = read_image(path)
+        img = pre_processing(img)
+        img.save("pre_processing/{}.png".format(idx))
+    
