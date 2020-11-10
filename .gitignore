@@ -1,4 +1,6 @@
 *.pyc
 .vscode
 *.png
+*.PNG
 *.pth
+raw_sig
