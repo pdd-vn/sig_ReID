@@ -67,7 +67,6 @@ def build_transforms(cfg, is_train=True):
         ])
     else:
         transform = T.Compose([
-            res_pad,
             T.ToTensor(),
             normalize_transform
         ])
