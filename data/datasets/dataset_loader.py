@@ -52,7 +52,6 @@ class ImageDataset(Dataset):
         else:
             raise Exception("invalid dataset <Techainer>")
     
-    
     def pre_processing(self, img):
         '''
         resize padding + binarizing image.
@@ -65,7 +64,6 @@ class ImageDataset(Dataset):
 
         return PIL_img
         
-
     def resize_padding(self, img):
         '''
         resize then pad image
