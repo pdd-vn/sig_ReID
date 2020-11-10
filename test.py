@@ -7,7 +7,7 @@ from mlchain.base import ServeModel
 from scipy.spatial import distance
 
 class Sig_Ver_Model():
-    def __init__(self, model_path="./resnet50_model_25.pth"):
+    def __init__(self, model_path):
         with torch.no_grad():
             self.model = torch.load(model_path, map_location='cpu')
             self.model.eval()
@@ -31,10 +31,11 @@ class Sig_Ver_Model():
                - threshold: threshold for cosine similarity evaluation.
         output: True/False
         '''
-        img1 = Image.open(img1_path)
-        img2 = Image.open(img2_path)
+        img1 = Image.open(img1_path).convert('RGB')
+        img2 = Image.open(img2_path).convert('RGB')
         
         transform = self.build_transforms()
+        # import ipdb; ipdb.set_trace()
         img1 = transform(img1).unsqueeze(0)
         img2 = transform(img2).unsqueeze(0)
         
@@ -42,6 +43,7 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
+        dis = distance.euclidean(feat1, feat2)
         if dis < threshold:
             return True, dis
         else:
@@ -63,6 +65,7 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
+        dis = distance.euclidean(feat1, feat2)
         if dis < threshold:
             return True, dis
         else:
@@ -89,16 +92,19 @@ class Sig_Ver_Model():
                 else:
                     print("{} != {} - dis: {}".format(img1, img2, dis))
 
-def main():
-    model = Sig_Ver_Model()
-    model.multiple_pair_verify("./f1", "./f2")
+# def main():
+#     model = Sig_Ver_Model()
+#     model.multiple_pair_verify("./f1", "./f2")
 
 
-model = Sig_Ver_Model()
-serve_model = ServeModel(model)
+# model = Sig_Ver_Model()
+# serve_model = ServeModel(model)
 
 if __name__=="__main__":
-    #main()
-    from mlchain.server import FlaskServer
-    # Run flask model with upto 12 threads
-    FlaskServer(serve_model).run(port=5000, threads=12)
+    # #main()
+    # from mlchain.server import FlaskServer
+    # # Run flask model with upto 12 threads
+    # FlaskServer(serve_model).run(port=5000, threads=12)
+
+    model = Sig_Ver_Model(model_path="test.pth")
+    print(model.verify("/home/pdd/Desktop/workspace/sig_ReID/sig_result/60.png", "/home/pdd/Desktop/workspace/sig_ReID/sig_result/61.png"))

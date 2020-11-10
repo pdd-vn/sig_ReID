@@ -6,11 +6,10 @@
 
 import numpy as np
 
-
-def eval_func(distmat, q_pids, g_pids, q_camids=None, g_camids=None, max_rank=50):
-    """Evaluation with market1501 metric
-        Key: for each query identity, its gallery images from the same camera view are discarded.
-        """
+def eval_func(distmat, q_pids, g_pids, max_rank=50):
+    '''
+    Evaluate cmc and map
+    '''
     num_q, num_g = distmat.shape
     if num_g < max_rank:
         max_rank = num_g

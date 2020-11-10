@@ -5,6 +5,7 @@
 """
 
 import os.path as osp
+import math
 import cv2
 import numpy as np
 from imgaug import augmenters as iaa
@@ -22,7 +23,8 @@ def read_image(img_path):
         try:
             # img = Image.open(img_path).convert('RGB')
             cv2_img = cv2.imread(img_path, 0)
-            cv2_img = cv2.threshold(cv2_img, 200, 255, cv2.THRESH_BINARY)
+            _, cv2_img = cv2.threshold(cv2_img, 200, 255, cv2.THRESH_BINARY)
+            cv2_img = cv2.cvtColor(cv2_img, cv2.COLOR_GRAY2RGB)
             PIL_img = Image.fromarray(cv2_img)
             got_img = True
         except IOError:
@@ -32,11 +34,12 @@ def read_image(img_path):
 
 
 class ImageDataset(Dataset):
-    """Image Person ReID Dataset"""
+    """ReID Dataset"""
 
-    def __init__(self, dataset, transform=None):
+    def __init__(self, cfg, dataset, transform=None):
         self.dataset = dataset
         self.transform = transform
+        self.size = cfg.INPUT.SIZE_TRAIN
 
     def __len__(self):
         return len(self.dataset)
@@ -45,9 +48,41 @@ class ImageDataset(Dataset):
         if len(self.dataset[index]) == 2:
             img_path, pid = self.dataset[index]
             img = read_image(img_path)
+            img = self.resize_padding(img)
 
             if self.transform is not None:
                 img = self.transform(img)
             return img, pid, img_path
         else:
             raise Exception("invalid dataset <Techainer>")
+    
+    def resize_padding(self, img):
+        '''
+        resize then pad image
+        :params: img: PIL.Image
+        '''
+        if not isinstance(img, Image.Image):
+            raise TypeError("Only support PIL Image")
+
+        w, h = img.size
+        new_h, new_w = cfg_size
+        canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
+
+        if w >= h:
+            resize_ratio = new_w / w
+        else:
+            resize_ratio = new_h / h
+
+        img = img.resize((math.ceil(w*resize_ratio), 
+                          math.ceil(h*resize_ratio)), Image.BICUBIC)
+
+        current_w, current_h = img.size
+        canvas.paste(img, (math.ceil((new_w-current_w)/2),
+                           math.ceil((new_h-current_h)/2)))
+
+        return canvas
+
+
+if __name__=="__main__":
+    img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
+    img.show()
