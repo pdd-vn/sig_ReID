@@ -24,7 +24,7 @@ class Sig_Ver_Model():
         return transform
 
 
-    def verify(self, img1_path, img2_path, threshold=0.3):   
+    def verify(self, img1_path, img2_path, threshold=0.4):   
         '''
         verify 2 signature using image path.
         input: - img1_path, img2_path: path to image to verify.
@@ -50,7 +50,7 @@ class Sig_Ver_Model():
             return False, dis
     
 
-    def verify2(self, img1, img2, threshold=0.2):  
+    def verify2(self, img1, img2, threshold=0.4):  
         '''
         verify 2 signature using image file.
         input: - img1, img2: image to verify.
@@ -93,21 +93,9 @@ class Sig_Ver_Model():
                 else:
                     print("{} != {} - dis: {}".format(img1, img2, dis))
 
-# def main():
-#     model = Sig_Ver_Model()
-#     model.multiple_pair_verify("./f1", "./f2")
-
-
-# model = Sig_Ver_Model()
-# serve_model = ServeModel(model)
 
 if __name__=="__main__":
-    # #main()
-    # from mlchain.server import FlaskServer
-    # # Run flask model with upto 12 threads
-    # FlaskServer(serve_model).run(port=5000, threads=12)
-
-    model = Sig_Ver_Model(model_path="model_recog.pth")
+    model = Sig_Ver_Model(model_path="/home/pdd/Desktop/workspace/sig_ReID/resnet50_model_15.pth")
     # print(model.verify("/home/pdd/Desktop/workspace/sig_ReID/NFI-00401063.png", 
     #                     "/home/pdd/Desktop/workspace/sig_ReID/NFI-01601033.png"))
     model.multiple_pair_verify("test", "test")
