@@ -60,7 +60,6 @@ def build_transforms(cfg, is_train=True):
     custom_tf = T.Lambda(custom_transform)
     if is_train:
         transform = T.Compose([
-            T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
             custom_tf,
             T.ToTensor(),
             normalize_transform,
