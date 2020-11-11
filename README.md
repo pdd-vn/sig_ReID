@@ -24,6 +24,7 @@ data
 * Reconfig `train.sh` if needed, see 'config/' for default configs and 'configs/' for some particular configs.  
 * Remember to set `OUTPUT_DIR` in `train.sh` to yours.
 * Run `sh train.sh`.  
+[Colab](https://colab.research.google.com/drive/1AwA8HliKZfrgXovCHv1oqEYnDM7oQD0v#scrollTo=MTV_o6DEfxdp)
 
 ## Augment data
 * Add your custom augmentation at "data/transforms/build.py"
