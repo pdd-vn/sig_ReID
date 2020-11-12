@@ -56,12 +56,12 @@ def custom_transform(img, prob=0.7):
 
 
 def build_transforms(cfg, is_train=True):
-    normalize_transform = T.Normalize(mean=cfg.INPUT.PIXEL_MEAN, std=cfg.INPUT.PIXEL_STD)
-    custom_tf = T.Lambda(custom_transform)
+    normalize_transform = T.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+    # custom_tf = T.Lambda(custom_transform)
     if is_train:
         transform = T.Compose([
             T.RandomHorizontalFlip(p=cfg.INPUT.PROB),
-            custom_tf,
+            # custom_tf,
             T.ToTensor(),
             normalize_transform,
         ])

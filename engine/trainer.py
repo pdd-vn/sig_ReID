@@ -49,7 +49,7 @@ def create_supervised_trainer(model, optimizer, loss_fn,
         optimizer.step()
         # compute acc
         acc = (score.max(1)[1] == target).float().mean()
-        print("current loss {} - current acc {}".format(loss, acc))
+        # print("current loss {} - current acc {}".format(loss, acc))
         return loss.item(), acc.item()
 
     return Engine(_update)
@@ -93,7 +93,7 @@ def create_supervised_trainer_with_center(model, center_criterion, optimizer, op
 
         # compute acc
         acc = (score.max(1)[1] == target).float().mean()
-        print("Accuracy is {}".format(acc))
+        # print("Accuracy is {}".format(acc))
         return loss.item(), acc.item()
 
     return Engine(_update)

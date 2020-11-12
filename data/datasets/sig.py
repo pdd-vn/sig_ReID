@@ -13,6 +13,9 @@ import os
 from .bases import BaseImageDataset
 from sklearn.model_selection import train_test_split
 
+import random 
+import numpy as np
+
 class BREAK(Exception): pass
 
 class sig(BaseImageDataset):
@@ -27,54 +30,45 @@ class sig(BaseImageDataset):
         self.num_query_pids, self.num_query_imgs = self.get_imagedata_info(self.query)
         self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
 
-    def create_dataset(self, data_path, train_ratio=0.6, gallery_ratio=0.28):
-        heap = []
-        data_size = 0
-        for index, folder in enumerate(os.listdir(data_path)):
-            img_set = set()
-            folder_path = os.path.join(data_path, folder)
-            for img in os.listdir(folder_path):
-                img_path = os.path.join(folder_path, img)
-                img_set.add((img_path,index))
-                data_size += 1
-            if len(img_set) != 0:
-                heap.append(img_set)
-                
-        train_size = int(data_size*train_ratio)
-        gallery_size = int(data_size*gallery_ratio)
-        
+
+    def create_dataset(self, dataset_path, train_ratio=0.7, gallery_ratio=0.3):
         train = []
         gallery = []
-        while True:
-            try:
-                for img_set in heap:
-                    if len(img_set) == 0:
-                        heap.remove(img_set)
-                    else:
-                        train.append(img_set.pop())
-                        if len(train) == train_size:
-                            raise BREAK
-            except BREAK:
-                break
+        query = []
+
+        all_id_folder = os.listdir(dataset_path)
+        id_label = 0
+        for index, id_folder in enumerate(all_id_folder):
+            id_set = []
+            id_folder_path = os.path.join(dataset_path, id_folder)
+            each_id_folder_path = glob.glob(os.path.join(id_folder_path, "*"))
+            if len(each_id_folder_path) == 0:
+                continue
+            for path in each_id_folder_path:
+                id_set.append((path, id_label))
             
-        while True:
-            try:
-                for img_set in heap:
-                    if len(img_set) == 0:
-                        heap.remove(img_set)
-                    else:
-                        gallery.append(img_set.pop())
-                        if len(gallery) == gallery_size:
-                            raise BREAK
-            except BREAK:
-                break
-                
-        query = set()
-        for img_set in heap:
-            if len(img_set) != 0:
-                query.update(img_set)
-        query = list(query)
+            sub_train = random.sample(id_set, int(train_ratio * len(id_set)))
+            # sub_gallery = random.sample(id_set, int(gallery_ratio * len(id_set)))
+            sub_query = list(set(id_set) - set(sub_train))
+            sub_gallery = sub_query
+
+            train.extend(sub_train)
+            gallery.extend(sub_gallery)
+            query.extend(sub_query)
+            id_label += 1
         
+        count_id_train = [0] *  id_label
+        for each in train:
+            count_id_train[each[1]] += 1
+        
+        count_id_gal = [0] *  id_label
+        for each in gallery:
+            count_id_gal[each[1]] += 1
+
+        count_id_query = [0] *  id_label
+        for each in query:
+            count_id_query[each[1]] += 1
+
         return train, gallery, query
     
 if __name__ == "__main__":

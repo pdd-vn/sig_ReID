@@ -1,11 +1,9 @@
 MODEL:
   PRETRAIN_CHOICE: 'imagenet'
-  PRETRAIN_PATH: '/content/drive/My Drive/resnet50.pth'
+  PRETRAIN_PATH: 'weights/resnet50.pth'
   METRIC_LOSS_TYPE: 'triplet'
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'no'
-
-
 
 
 INPUT:
@@ -62,6 +60,6 @@ TEST:
   NECK_FEAT: 'before'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "/content/drive/My Drive/training/sig_ReID"
+OUTPUT_DIR: "logs"
 
 
