@@ -111,36 +111,36 @@ def augment_imgaug(image):
 
 
 def augment_image(signature):
-    ''' Augment signature 
+    ''' Augment signature
     Params
         :image: PIL.Image
     Return
         :image: pIL.Image - augmented image
     '''
-    
+
     aug_stt = False
-    if random.random() < 0.4:
-        signature = utils.blur_signature_std(signature, k_svd=(35, 65), color=[0, (0, 85), (130, 255)])
+    if random.random() < 0.5:
+        signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
         aug_stt = True
 
-    ratio_noise = random.random() 
+    ratio_noise = random.random()
     ratio_noise = 1
     wid_sig, hei_sig = signature.size
-    wid_bg = wid_sig + int(random.uniform(0., 0.1)* wid_sig)
-    hei_bg = hei_sig + int(random.uniform(0., 0.1)* hei_sig)
+    wid_bg = wid_sig + int(random.uniform(0., 0.7)* wid_sig)
+    hei_bg = hei_sig + int(random.uniform(0., 0.7)* hei_sig)
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
     # Random add symbol
-    if ratio_noise < 0.05: 
+    if ratio_noise < 0.05:
         noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
         color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
         background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
     # Random add stamp
-    elif ratio_noise < 0.1:
+    elif ratio_noise < 0.2:
         noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
-        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)    
+        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
     # Random add text
-    elif ratio_noise < 0.15:
+    elif ratio_noise < 0.35:
         background = add_random_text(background)
 
     # Random overlay signature on background
@@ -191,7 +191,7 @@ class ImageDataset(Dataset):
         # _, img_array = cv2.threshold(img_array, 200, 255, cv2.THRESH_BINARY)
         # PIL_img = Image.fromarray(img_array)
 
-        return PIL_img
+        return img
 
 
     def resize_padding(self, img):
@@ -207,8 +207,9 @@ class ImageDataset(Dataset):
         canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
 
         resize_ratio = min(new_w/w, new_h/h)
+        resize_ratio = random.uniform(0.75, 1)
 
-        img = img.resize((int(w*resize_ratio), 
+        img = img.resize((int(w*resize_ratio),
                           int(h*resize_ratio)), Image.BICUBIC)
 
         current_w, current_h = img.size
@@ -226,4 +227,4 @@ if __name__=="__main__":
         img = read_image(path)
         img = pre_processing(img)
         img.save("pre_processing/{}.png".format(idx))
-    
+

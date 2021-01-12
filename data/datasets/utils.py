@@ -191,7 +191,7 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
     }
 
 
-def change_color_transparent(image, color=(None, None, None)):
+def change_color_transparent(image, color=(None, None, None), smooth=False):
     if isinstance(image, PIL.Image.Image):
         if image.mode == "L":
             image = image.convert("RGB")
@@ -204,14 +204,23 @@ def change_color_transparent(image, color=(None, None, None)):
 
     for i in range(3):
         if color[i] == "random":
-            image[:,:,i] = random.randint(0, 255)
+            if smooth:
+                color_channel = random.randint(0, 255)
+                image[:,:,i] = np.maximum(np.abs(image[:,:,i] - color_channel), image[:,:,i])
+            else:
+                image[:,:,i] = random.randint(0, 255)
         elif isinstance(color[i], tuple):
-            image[:,:,i] = random.randint(color[i][0], color[i][1])
+            if smooth:
+                color_channel = random.randint(color[i][0], color[i][1])
+                image[:,:,i] = np.maximum(np.abs(image[:,:,i] - color_channel), image[:,:,i])
+            else:
+                image[:,:,i] = random.randint(color[i][0], color[i][1])
         elif isinstance(color[i], int):
-            image[:,:,i] = color[i]
-        # image[:,:,0] = color[0]
-        # image[:,:,1] = color[1]
-        # image[:,:,2] = color[2]
+            if smooth:
+                image[:,:,i] = np.maximum(np.abs(color[i] - image[:,:,i]), image[:,:,i])
+            else:
+                image[:,:,i] = color[i]
+
     image = Image.fromarray(image)
     return image
 
@@ -421,13 +430,13 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
     '''
     # Create blur shadow signature
     # color_shadow=[None, None, None]
-    color_shadow=[254, 254, 254]
+    color_shadow=[None, None, 255]
 
     color = list(color)
     for i in range(len(color)):
         if color[i] is None:
             color[i] = random.randint(0, 255)
-    if random.random() < 0.2:
+    if random.random() < 0:
         for i in range(len(color)):
             if isinstance(color[i], int):
                 color_shadow[i] = random.randint(int(color[i]*1.2), int(color[i]*2))
@@ -445,12 +454,12 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
         aug_dilate = False
 
     if aug_erode:
-        k_erode = random.randint(1, 3)
+        k_erode = random.randint(2, 3)
         img = erosion_img(img, k_erode)
 
     # Blur eroded image
     if k_blur is None:
-        k_blur = random.randint(1, 3)
+        k_blur = random.randint(2, 3)
     shadow_blur = blur_img(img, k=k_blur)
 
     # Compress blur image
@@ -460,17 +469,19 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
 
     # Augment and transparent image
     shadow_trans = create_transparent_image(shadow)
-    shadow_trans = change_color_transparent(shadow_trans, color=color_shadow)
+    shadow_trans = change_color_transparent(shadow_trans, color=color_shadow, smooth=True)
+    shadow_trans.show()
 
     # Dilate raw image
     if aug_dilate:
-        k_dilate = random.randint(1, 3)
+        k_dilate = random.randint(2, 3)
         img = dilation_img(img, k_size=k_dilate)
 
     # Augment and transparent image
-    img = create_transparent_image(img)
+    img = create_transparent_image(img, threshold=100)
     img = change_color_transparent(img, color=color)
 
+    
     # fill raw signature to blur background
     shadow_trans.paste(img, (0,0), img)
 
