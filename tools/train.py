@@ -159,7 +159,6 @@ def main():
     if cfg.MODEL.DEVICE == "cuda":
         os.environ['CUDA_VISIBLE_DEVICES'] = cfg.MODEL.DEVICE_ID    # new add by gu
     cudnn.benchmark = True
-    #import ipdb; ipdb.set_trace()
     train(cfg)
 
 

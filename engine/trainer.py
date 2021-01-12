@@ -93,7 +93,6 @@ def create_supervised_trainer_with_center(model, center_criterion, optimizer, op
 
         # compute acc
         acc = (score.max(1)[1] == target).float().mean()
-        # print("Accuracy is {}".format(acc))
         return loss.item(), acc.item()
 
     return Engine(_update)
@@ -229,7 +228,6 @@ def do_train_with_center(
         num_query,
         start_epoch
 ):
-    #import ipdb; ipdb.set_trace()
     log_period = cfg.SOLVER.LOG_PERIOD
     checkpoint_period = cfg.SOLVER.CHECKPOINT_PERIOD
     eval_period = cfg.SOLVER.EVAL_PERIOD
@@ -241,7 +239,7 @@ def do_train_with_center(
     logger.info("Start training")
     trainer = create_supervised_trainer_with_center(model, center_criterion, optimizer, optimizer_center, loss_fn, cfg.SOLVER.CENTER_LOSS_WEIGHT, device=device)
     evaluator = create_supervised_evaluator(model, metrics={'r1_mAP': R1_mAP(num_query, max_rank=50, feat_norm=cfg.TEST.FEAT_NORM)}, device=device)
-    checkpointer = ModelCheckpoint(output_dir, cfg.MODEL.NAME, checkpoint_period, n_saved=10, require_empty=False)
+    checkpointer = ModelCheckpoint(output_dir, cfg.MODEL.NAME, checkpoint_period, n_saved=100, require_empty=False)
     timer = Timer(average=True)
 
     trainer.add_event_handler(Events.EPOCH_COMPLETED, checkpointer, {'model': model,

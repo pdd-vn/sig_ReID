@@ -4,3 +4,9 @@
 *.PNG
 *.pth
 raw_sig
+data/sig*
+log*
+*.tar.gz
+*.zip
+font
+symbol

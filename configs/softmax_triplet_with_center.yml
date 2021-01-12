@@ -8,8 +8,8 @@ MODEL:
 INPUT:
   SIZE_TRAIN: [125, 250]
   SIZE_TEST: [125, 250]
-  PROB: 0.5 # random horizontal flip
-  RE_PROB: 0.5 # random erasing
+  PROB: 0 # random horizontal flip
+  RE_PROB: 0 # random erasing
   PADDING: 10
 
 DATALOADER:
@@ -56,6 +56,6 @@ TEST:
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "log_test_augment_01_1211"
+OUTPUT_DIR: "log_test_augment_012021"
 
 
