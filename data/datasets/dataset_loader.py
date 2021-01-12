@@ -27,14 +27,11 @@ corpus = [
     "Mẫu chữ ký cũ đã dăng ký"
 ]
 
-symbol_list = glob.glob("data/symbol/*.png")
-stamp_list = glob.glob("data/stamp/*.png")
-fonts = glob.glob("data/font/*")
+symbol_list = glob.glob("../../data/symbol/*")
+stamp_list = glob.glob("../../data/stamp/*")
+fonts = glob.glob("../../data/font/*")
 
 aug = iaa.Sequential([
-    # iaa.Sometimes(0.15, SpotLight()),
-    # iaa.Sometimes(0.15, ParallelLight()),
-    # iaa.Sometimes(0.15, LightFlare()),
     # Augment blur
     iaa.Sometimes(0.5,
         iaa.OneOf([
@@ -52,7 +49,6 @@ aug = iaa.Sequential([
     # Condition
     iaa.Sometimes(0.25,
         iaa.OneOf([
-            # iaa.Clouds(),
             iaa.MultiplyBrightness((0.5, 1.5)),
             iaa.CoarseDropout(0.02, size_percent=0.01, per_channel=1),
             iaa.PerspectiveTransform(scale=(0.01, 0.05), keep_size=False),
@@ -118,29 +114,36 @@ def augment_image(signature):
         :image: pIL.Image - augmented image
     '''
 
+    w_sig, h_sig = signature.size
+    if w_sig > 600 or h_sig > 600:
+        ratio = h_sig/w_sig
+        new_wid = 600
+        new_hei = int(ratio* new_wid)
+        signature = signature.resize((new_wid, new_hei))
+
     aug_stt = False
     if random.random() < 0.5:
         signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
         aug_stt = True
 
     ratio_noise = random.random()
-    ratio_noise = 1
+    # ratio_noise = 1
     wid_sig, hei_sig = signature.size
     wid_bg = wid_sig + int(random.uniform(0., 0.7)* wid_sig)
     hei_bg = hei_sig + int(random.uniform(0., 0.7)* hei_sig)
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
     # Random add symbol
-    if ratio_noise < 0.05:
+    if ratio_noise < 0.03:
         noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
         color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
         background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
     # Random add stamp
-    elif ratio_noise < 0.2:
+    elif ratio_noise < 0.15:
         noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
         background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
     # Random add text
-    elif ratio_noise < 0.35:
+    elif ratio_noise < 0.3:
         background = add_random_text(background)
 
     # Random overlay signature on background
@@ -154,9 +157,32 @@ def augment_image(signature):
 
     background = utils.overlay_transparent(background=background, foreground=signature, coordinate=coord_sig, ratio=(0.5, 0.9))['filled_image']
 
+    background = resize_padding(background)
     return background
 
+def resize_padding(img, size=(250, 125)):
+    '''
+    resize then pad image
+    :params: img: PIL.Image
+    '''
+    if not isinstance(img, Image.Image):
+        raise TypeError("Only support PIL Image")
 
+    w, h = img.size
+    new_w, new_h = size
+    canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
+
+    resize_ratio = min(new_w/w, new_h/h)
+    # resize_ratio = random.uniform(0.75, 1)
+
+    img = img.resize((int(w*resize_ratio),
+                        int(h*resize_ratio)), Image.BICUBIC)
+
+    current_w, current_h = img.size
+    canvas.paste(img, (int((new_w-current_w)/2),
+                        int((new_h-current_h)/2)))
+
+    return canvas
 class ImageDataset(Dataset):
     """ReID Dataset"""
 
@@ -174,7 +200,7 @@ class ImageDataset(Dataset):
             img = read_image(img_path)
             img = augment_image(img)
             # img = self.pre_processing(img)
-            img = self.resize_padding(img)
+            img = self.pre_processing(img)
             if self.transform is not None:
                 img = self.transform(img)
             return img, pid, img_path
@@ -184,47 +210,27 @@ class ImageDataset(Dataset):
 
     def pre_processing(self, img):
         '''
-        resize padding + binarizing image.
+        resize + padding image.
         '''
-        img = self.resize_padding(img)
-        # img_array = np.array(img)
-        # _, img_array = cv2.threshold(img_array, 200, 255, cv2.THRESH_BINARY)
-        # PIL_img = Image.fromarray(img_array)
-
+        img = resize_padding(img)
         return img
 
-
-    def resize_padding(self, img):
-        '''
-        resize then pad image
-        :params: img: PIL.Image
-        '''
-        if not isinstance(img, Image.Image):
-            raise TypeError("Only support PIL Image")
-
-        w, h = img.size
-        new_h, new_w = self.size
-        canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
-
-        resize_ratio = min(new_w/w, new_h/h)
-        resize_ratio = random.uniform(0.75, 1)
-
-        img = img.resize((int(w*resize_ratio),
-                          int(h*resize_ratio)), Image.BICUBIC)
-
-        current_w, current_h = img.size
-        canvas.paste(img, (int((new_w-current_w)/2),
-                           int((new_h-current_h)/2)))
-
-        return canvas
 
 
 if __name__=="__main__":
     # img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
-    search_path = "./raw_sig/*/*.png"
+    search_path = "/media/geneous/01D62877FB2A4900/Techainer/OCR/sig_ReID/data/sig/*/*"
     import glob
     for idx, path in enumerate(glob.glob(search_path)):
         img = read_image(path)
-        img = pre_processing(img)
-        img.save("pre_processing/{}.png".format(idx))
+        # img = pre_processing(img)
+        img = augment_image(img)
+        print(img.size)
+        img_cv = np.array(img)[:,:,::-1]
+        # cv2.namedWindow("", cv2.WINDOW_NORMAL)
+        cv2.imshow("", img_cv)
+        key = cv2.waitKey(0)
+        if key == 27:
+            break
+        # img.save("pre_processing/{}.png".format(idx))
 

@@ -470,7 +470,7 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
     # Augment and transparent image
     shadow_trans = create_transparent_image(shadow)
     shadow_trans = change_color_transparent(shadow_trans, color=color_shadow, smooth=True)
-    shadow_trans.show()
+    # shadow_trans.show()
 
     # Dilate raw image
     if aug_dilate:

@@ -4,9 +4,12 @@
 *.PNG
 *.pth
 raw_sig
-data/sig*
+data/
 log*
 *.tar.gz
 *.zip
 font
 symbol
+.DSTORE
+test*
+weights*
