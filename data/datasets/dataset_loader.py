@@ -27,9 +27,9 @@ corpus = [
     "Mẫu chữ ký cũ đã dăng ký"
 ]
 
-symbol_list = glob.glob("../../data/symbol/*")
-stamp_list = glob.glob("../../data/stamp/*")
-fonts = glob.glob("../../data/font/*")
+symbol_list = glob.glob("./data/symbol/*")
+stamp_list = glob.glob("./data/stamp/*")
+fonts = glob.glob("./data/font/*")
 
 aug = iaa.Sequential([
     # Augment blur
@@ -70,11 +70,12 @@ def read_image(img_path):
     while not got_img:
         try:
             img = Image.open(img_path).convert('RGB')
+            id_image = int(img_path.split("/")[-2])
             got_img = True
         except IOError:
             print("IOError incurred when reading '{}'. Will redo. Don't worry. Just chill.".format(img_path))
             pass
-    return img
+    return img, id_image
 
 
 def add_random_text(background):
@@ -197,8 +198,9 @@ class ImageDataset(Dataset):
     def __getitem__(self, index):
         if len(self.dataset[index]) == 2:
             img_path, pid = self.dataset[index]
-            img = read_image(img_path)
-            img = augment_image(img)
+            img, id_img = read_image(img_path)
+            if id_img <= 820:
+                img = augment_image(img)
             # img = self.pre_processing(img)
             img = self.pre_processing(img)
             if self.transform is not None:

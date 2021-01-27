@@ -1,7 +1,10 @@
 MODEL:
+  NAME: "resnet50_ibn_a"
   PRETRAIN_CHOICE: 'imagenet'
-  PRETRAIN_PATH: 'weights/resnet50.pth'
+  PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
+  
   METRIC_LOSS_TYPE: 'triplet_center'
+  # METRIC_LOSS_TYPE: 'circle_center'
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'yes'
 
@@ -56,6 +59,6 @@ TEST:
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "log_test_augment_012021"
+OUTPUT_DIR: "log/log_19012021_triplet"
 
 

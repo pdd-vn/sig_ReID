@@ -5,23 +5,45 @@ import torchvision.transforms as T
 from PIL import Image
 from mlchain.base import ServeModel
 from scipy.spatial import distance
+import cv2
 
 class Sig_Ver_Model():
     def __init__(self, model_path):
-        with torch.no_grad():
-            self.model = torch.load(model_path, map_location='cpu')
-            self.model.eval()
-    
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = torch.load(model_path, map_location=self.device)
+        self.model.eval()
 
     def build_transforms(self):
-        normalize_transform = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        normalize_transform = T.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         transform = T.Compose([
-                T.Resize([125, 250]),
                 T.ToTensor(),
                 normalize_transform
             ])
-
         return transform
+
+
+    def resize_padding(self, img, size=(250, 125)):
+        '''
+        resize then pad image
+        :params: img: PIL.Image
+        '''
+        if not isinstance(img, Image.Image):
+            raise TypeError("Only support PIL Image")
+
+        w, h = img.size
+        new_w, new_h = size
+        canvas = Image.new("RGB", (new_w, new_h), color=(255,255,255))
+
+        resize_ratio = min(new_w/w, new_h/h)
+
+        img = img.resize((int(w*resize_ratio),
+                            int(h*resize_ratio)), Image.BICUBIC)
+
+        current_w, current_h = img.size
+        canvas.paste(img, (int((new_w-current_w)/2),
+                            int((new_h-current_h)/2)))
+
+        return canvas
 
 
     def verify(self, img1_path, img2_path, threshold=0.4):   
@@ -35,7 +57,15 @@ class Sig_Ver_Model():
         img2 = Image.open(img2_path).convert('RGB')
         
         transform = self.build_transforms()
-        # import ipdb; ipdb.set_trace()
+
+        img1 = self.resize_padding(img1)
+        img2 = self.resize_padding(img2)
+        
+        img1_cv = np.array(img1)
+        img2_cv = np.array(img2)
+
+        
+
         img1 = transform(img1).unsqueeze(0)
         img2 = transform(img2).unsqueeze(0)
         
@@ -43,29 +73,7 @@ class Sig_Ver_Model():
         feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
-        # dis = distance.euclidean(feat1, feat2)
-        if dis < threshold:
-            return True, dis
-        else:
-            return False, dis
-    
 
-    def verify2(self, img1, img2, threshold=0.4):  
-        '''
-        verify 2 signature using image file.
-        input: - img1, img2: image to verify.
-               - threshold: threshold for cosine similarity evaluation.
-        output: True/False
-        '''
-        transform = self.build_transforms()
-        img1 = transform(img1).unsqueeze(0)
-        img2 = transform(img2).unsqueeze(0)
-        
-        feat1 = self.model(img1).detach().numpy()
-        feat2 = self.model(img2).detach().numpy()
-
-        dis = distance.cosine(feat1, feat2)
-        dis = distance.euclidean(feat1, feat2)
         if dis < threshold:
             return True, dis
         else:
@@ -95,7 +103,8 @@ class Sig_Ver_Model():
 
 
 if __name__=="__main__":
-    model = Sig_Ver_Model(model_path="/home/pdd/Desktop/workspace/sig_ReID/resnet50_model_15.pth")
-    # print(model.verify("/home/pdd/Desktop/workspace/sig_ReID/NFI-00401063.png", 
-    #                     "/home/pdd/Desktop/workspace/sig_ReID/NFI-01601033.png"))
-    model.multiple_pair_verify("test", "test")
+    model = Sig_Ver_Model(model_path="weights/model_13012020_ep45.pth")
+
+    path_1 = "test_signature_recognition/test_random"
+    path_2 = "test_signature_recognition/test_random"
+    model.multiple_pair_verify(path_1, path_2)

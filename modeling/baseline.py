@@ -129,6 +129,7 @@ class Baseline(nn.Module):
             self.base = resnet50_ibn_a(last_stride)
 
         if pretrain_choice == 'imagenet':
+            print(model_path)
             self.base.load_param(model_path)
             print('Loading pretrained ImageNet model......')
 
@@ -165,10 +166,14 @@ class Baseline(nn.Module):
             return cls_score, global_feat  # global feature for triplet loss
         else:
             if self.neck_feat == 'after':
+                cls_score = self.classifier(feat)
                 # print("Test with feature after BN")
+                # return cls_score, feat
                 return feat
             else:
+                cls_score = self.classifier(feat)
                 # print("Test with feature before BN")
+                # return cls_score, global_feat
                 return global_feat
 
     def load_param(self, trained_path):

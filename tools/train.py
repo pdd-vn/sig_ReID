@@ -10,6 +10,7 @@ import sys
 import torch
 
 from torch.backends import cudnn
+import torch.nn as nn
 
 sys.path.append('.')
 from config import cfg
@@ -21,6 +22,21 @@ from solver import make_optimizer, make_optimizer_with_center, WarmupMultiStepLR
 
 from utils.logger import setup_logger
 
+def load_my_statedict(model, state_dict):
+
+    own_state = model.state_dict()
+    for name, param in state_dict.items():
+        if name not in own_state:
+            continue
+        if isinstance(param, nn.Parameter):
+            param = param.data
+        try:
+            own_state[name].copy_(param)
+        except:
+            print("Skip layer: {}".format(name))
+            continue
+    return model
+
 
 def train(cfg):
     #import ipdb; ipdb.set_trace()
@@ -29,7 +45,6 @@ def train(cfg):
 
     # prepare model
     model = build_model(cfg, num_classes)
-
     if cfg.MODEL.IF_WITH_CENTER == 'no':
         print('Train without center loss, the loss type is', cfg.MODEL.METRIC_LOSS_TYPE)
         optimizer = make_optimizer(cfg, model)
@@ -76,7 +91,7 @@ def train(cfg):
         )
     elif cfg.MODEL.IF_WITH_CENTER == 'yes':
         print('Train with center loss, the loss type is', cfg.MODEL.METRIC_LOSS_TYPE)
-        #import ipdb; ipdb.set_trace()
+        
         loss_func, center_criterion = make_loss_with_center(cfg, num_classes)  # modified by gu
         optimizer, optimizer_center = make_optimizer_with_center(cfg, model, center_criterion)
         # scheduler = WarmupMultiStepLR(optimizer, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,
@@ -95,6 +110,9 @@ def train(cfg):
             path_to_optimizer_center = cfg.MODEL.PRETRAIN_PATH.replace('model', 'optimizer_center')
             print('Path to the checkpoint of optimizer_center:', path_to_optimizer_center)
             model.load_state_dict(torch.load(cfg.MODEL.PRETRAIN_PATH))
+            # state_dict = torch.load("pretrained_13012021.pth")
+            # model = load_my_statedict(model, state_dict)
+            # # model.load_state_dict(torch.load("pretrained_13012021.pth"))
             optimizer.load_state_dict(torch.load(path_to_optimizer))
             center_criterion.load_state_dict(torch.load(path_to_center_param))
             optimizer_center.load_state_dict(torch.load(path_to_optimizer_center))
@@ -102,6 +120,8 @@ def train(cfg):
                                           cfg.SOLVER.WARMUP_ITERS, cfg.SOLVER.WARMUP_METHOD, start_epoch)
         elif cfg.MODEL.PRETRAIN_CHOICE == 'imagenet':
             start_epoch = 0
+            # state_dict = torch.load("pretrained_13012021.pth")
+            # model = load_my_statedict(model, state_dict)
             scheduler = WarmupMultiStepLR(optimizer, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,
                                           cfg.SOLVER.WARMUP_ITERS, cfg.SOLVER.WARMUP_METHOD)
         else:
