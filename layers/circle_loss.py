@@ -60,8 +60,10 @@ def pairwise_circleloss(
 def pairwise_circleloss_forgery(
         embedding: torch.Tensor,
         targets: torch.Tensor,
+        real_forg: torch.Tensor,
         margin: float=0.25,
         gamma: float=128, ) -> torch.Tensor:
+    import ipdb; ipdb.set_trace()
     # Normalize embedding vector
     embedding = F.normalize(embedding, dim=1)
 

@@ -49,4 +49,5 @@ def make_data_loader(cfg):
         val_set, batch_size=cfg.TEST.IMS_PER_BATCH, shuffle=False, num_workers=num_workers,
         collate_fn=val_collate_fn
     )
+    # import ipdb; ipdb.set_trace()
     return train_loader, val_loader, len(dataset.query), num_classes

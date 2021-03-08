@@ -127,6 +127,9 @@ def train(cfg):
         else:
             print('Only support pretrain_choice for imagenet and self, but got {}'.format(cfg.MODEL.PRETRAIN_CHOICE))
 
+
+        # import ipdb; ipdb.set_trace()
+
         do_train_with_center(
             cfg,
             model,

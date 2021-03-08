@@ -4,8 +4,8 @@ MODEL:
   PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
   
   # METRIC_LOSS_TYPE: 'triplet_center'
-  # METRIC_LOSS_TYPE: 'circle_forgery_center'
-  METRIC_LOSS_TYPE: 'circle_center'
+  METRIC_LOSS_TYPE: 'circle_forgery_center'
+  # METRIC_LOSS_TYPE: 'circle_center'
 
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'yes'

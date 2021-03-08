@@ -9,6 +9,8 @@ import torch.nn.functional as F
 from .triplet_loss import TripletLoss, CrossEntropyLabelSmooth
 from .center_loss import CenterLoss
 from .circle_loss import pairwise_circleloss as circle
+from .circle_loss import pairwise_circleloss_forgery as circle_forg
+
 
 
 def make_loss(cfg, num_classes):    # modified by gu
@@ -58,7 +60,7 @@ def make_loss_with_center(cfg, num_classes):    # modified by gu
         triplet = TripletLoss(cfg.SOLVER.MARGIN)  # triplet loss
         center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=True)  # center loss
 
-    elif cfg.MODEL.METRIC_LOSS_TYPE == 'circle_center':
+    elif cfg.MODEL.METRIC_LOSS_TYPE == 'circle_center' or cfg.MODEL.METRIC_LOSS_TYPE == 'circle_forgery_center' :
         center_criterion = CenterLoss(num_classes=num_classes, feat_dim=feat_dim, use_gpu=True)  # center loss
 
     else:
@@ -69,7 +71,7 @@ def make_loss_with_center(cfg, num_classes):    # modified by gu
         xent = CrossEntropyLabelSmooth(num_classes=num_classes)     # new add by luo
         print("label smooth on, numclasses:", num_classes)
 
-    def loss_func(score, feat, target):
+    def loss_func(score, feat, target, real_forg):
         if cfg.MODEL.METRIC_LOSS_TYPE == 'center':
             if cfg.MODEL.IF_LABELSMOOTH == 'on':
                 return xent(score, target) + \
@@ -96,6 +98,18 @@ def make_loss_with_center(cfg, num_classes):    # modified by gu
             else:
                 return F.cross_entropy(score, target) + \
                         circle(feat, target) + \
+                        cfg.SOLVER.CENTER_LOSS_WEIGHT * center_criterion(feat, target)
+
+
+
+        elif cfg.MODEL.METRIC_LOSS_TYPE == 'circle_forgery_center':
+            if cfg.MODEL.IF_LABELSMOOTH == 'on':
+                return xent(score, target) + \
+                        circle_forg(feat, target, real_forg) + \
+                        cfg.SOLVER.CENTER_LOSS_WEIGHT * center_criterion(feat, target)
+            else:
+                return F.cross_entropy(score, target) + \
+                        circle_forg(feat, target, real_forg) + \
                         cfg.SOLVER.CENTER_LOSS_WEIGHT * center_criterion(feat, target)
 
         else:

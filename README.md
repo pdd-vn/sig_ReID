@@ -28,8 +28,13 @@ data
 
 ## Augment data
 * Add your custom augmentation at "data/transforms/build.py"
-* Download dataset: 17M5nZJOXyYlWGX9KY7fvDJkrHaZSN3LM
+
 * Download font text: 1nhynwV411rnXSw45WqF71rHsUC1z81bu
 * Download stamp data: 1Z_xFI5a6mF3yXw5UwdEJokNZDEdheMMF
 * Download symbol: 1IqBApbEqY5fuoST7fPPNAfU2EoSvgXcx
 
+
+## Dowdload pretrained weight
+
+1Ib3etZ16NrkV5bHhp1xTaGpG_ke7A-ty
+```wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id=1Ib3etZ16NrkV5bHhp1xTaGpG_ke7A-ty' -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=1Ib3etZ16NrkV5bHhp1xTaGpG_ke7A-ty" -O  weight.zip && rm -rf /tmp/cookies.txt```

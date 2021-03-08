@@ -79,11 +79,18 @@ def create_supervised_trainer_with_center(model, center_criterion, optimizer, op
         model.train()
         optimizer.zero_grad()
         optimizer_center.zero_grad()
-        img, target = batch
+        if len(batch) == 2:
+            img, target = batch
+            real_forg = torch.ones(target.shape, device=device)
+        elif len(batch) == 3:
+            img, target, real_forg  = batch
+            real_forg = torch.tensor(real_forg, device=device) if torch.cuda.device_count() >= 1 else real_forg
+
         img = img.to(device) if torch.cuda.device_count() >= 1 else img
         target = target.to(device) if torch.cuda.device_count() >= 1 else target
+
         score, feat = model(img)
-        loss = loss_fn(score, feat, target)
+        loss = loss_fn(score, feat, target, real_forg)
         print("Total loss is {}, center loss is {}".format(loss, center_criterion(feat, target)))
         loss.backward()
         optimizer.step()
@@ -293,5 +300,6 @@ def do_train_with_center(
             logger.info("mAP: {:.1%}".format(mAP))
             for r in [1, 5, 10]:
                 logger.info("CMC curve, Rank-{:<3}:{:.1%}".format(r, cmc[r - 1]))
+
 
     trainer.run(train_loader, max_epochs=epochs)
