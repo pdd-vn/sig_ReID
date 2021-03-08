@@ -70,12 +70,13 @@ def read_image(img_path):
     while not got_img:
         try:
             img = Image.open(img_path).convert('RGB')
-            id_image = int(img_path.split("/")[-2])
+            # id_image = int(img_path.split("/")[-2])
             got_img = True
         except IOError:
             print("IOError incurred when reading '{}'. Will redo. Don't worry. Just chill.".format(img_path))
             pass
-    return img, id_image
+    # return img, id_image
+    return img
 
 
 def add_random_text(background):
@@ -196,16 +197,30 @@ class ImageDataset(Dataset):
         return len(self.dataset)
 
     def __getitem__(self, index):
-        if len(self.dataset[index]) == 2:
-            img_path, pid = self.dataset[index]
-            img, id_img = read_image(img_path)
-            if id_img <= 820:
+        if isinstance(index, int): 
+            if len(self.dataset[index]) == 2:
+                img_path, pid = self.dataset[index]
+                # img, id_img = read_image(img_path)
+                img = read_image(img_path)
                 img = augment_image(img)
-            # img = self.pre_processing(img)
+                img = self.pre_processing(img)
+                if self.transform is not None:
+                    img = self.transform(img)
+                return img, pid, img_path
+            else:
+                raise Exception("invalid dataset <Techainer>")
+
+        elif isinstance(index, list):
+            index_num, real_forg = index
+
+            img_path, pid, real_forg = self.dataset[index_num]
+            
+            img = read_image(img_path)
+            img = augment_image(img)
             img = self.pre_processing(img)
             if self.transform is not None:
                 img = self.transform(img)
-            return img, pid, img_path
+            return img, pid, img_path, real_forg
         else:
             raise Exception("invalid dataset <Techainer>")
 

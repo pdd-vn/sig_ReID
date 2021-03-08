@@ -33,8 +33,14 @@ class RandomIdentitySampler(Sampler):
         if len(self.data_source[0]) == 2:
             for index, (_, pid) in enumerate(self.data_source):
                 self.index_dic[pid].append(index)
+        
+        elif len(self.data_source[0]) == 3:
+            for index, (_, pid, real_forg) in enumerate(self.data_source):
+                self.index_dic[pid].append([index, real_forg])
+        
         else:
             raise Exception("invalid source <made by pdd>")
+
         self.pids = list(self.index_dic.keys())
 
         # estimate number of examples in an epoch
@@ -52,7 +58,8 @@ class RandomIdentitySampler(Sampler):
         for pid in self.pids:
             idxs = copy.deepcopy(self.index_dic[pid])
             if len(idxs) < self.num_instances:
-                idxs = np.random.choice(idxs, size=self.num_instances, replace=True)
+                # idxs = np.random.choice(idxs, size=self.num_instances, replace=True)
+                idxs = random.choices(idxs, k=self.num_instances)
             random.shuffle(idxs)
             batch_idxs = []
             for idx in idxs:

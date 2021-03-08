@@ -21,6 +21,16 @@ class BaseDataset(object):
             num_pids = len(pids)
             num_imgs = len(data)
             return num_pids, num_imgs
+        
+        elif len(data[0]) == 3:
+            pids = []
+            for path, pid, real_forg in data:
+                pids += [pid]
+            pids = set(pids)
+            num_pids = len(pids)
+            num_imgs = len(data)
+            return num_pids, num_imgs
+        
         else:
             raise Exception("Invalid data <Techainer>")
 

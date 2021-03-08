@@ -72,12 +72,16 @@ _C.DATASETS.NAMES = ('sig')
 # Root directory where datasets should be used (and downloaded if not found)
 _C.DATASETS.ROOT_DIR = ('./data')
 
+_C.DATASETS.FORGERY_CLS = True
+_C.DATASETS.LABEL = ('label_signature.txt')
+
+
 # -----------------------------------------------------------------------------
 # DataLoader
 # -----------------------------------------------------------------------------
 _C.DATALOADER = CN()
 # Number of data loading threads
-_C.DATALOADER.NUM_WORKERS = 8
+_C.DATALOADER.NUM_WORKERS = 2
 # Sampler for data loading
 _C.DATALOADER.SAMPLER = 'softmax'
 # Number of instance for one batch

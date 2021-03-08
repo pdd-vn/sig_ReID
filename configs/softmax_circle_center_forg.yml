@@ -4,7 +4,9 @@ MODEL:
   PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
   
   # METRIC_LOSS_TYPE: 'triplet_center'
+  # METRIC_LOSS_TYPE: 'circle_forgery_center'
   METRIC_LOSS_TYPE: 'circle_center'
+
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'yes'
 
@@ -18,14 +20,13 @@ INPUT:
 DATALOADER:
   SAMPLER: 'softmax_triplet'
   NUM_INSTANCE: 4
-  NUM_WORKERS: 0
+  NUM_WORKERS: 4
 
 DATASETS:
   NAMES: 'sig'
   ROOT_DIR: './new_dataset/prepared_public_data'
   LABEL: './new_dataset/label_signature.txt'
-  FORGERY_CLS: False
-
+  FORGERY_CLS: True
 
 SOLVER:
   OPTIMIZER_NAME: 'Adam'
