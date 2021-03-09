@@ -64,6 +64,23 @@ def pairwise_circleloss_forgery(
         margin: float=0.25,
         gamma: float=128, ) -> torch.Tensor:
     
+    '''
+    sim
+        A1  A2  B1  B2
+    A1  1   1   0   0
+    A2  1   1   0   0
+    B1  0   0   1   1
+    B2  0   0   1   1
+
+    forg
+        A1  A2  B1  B2   
+        0.5 1   0.5 1
+        0.5 1   0.5 1
+        0.5 1   0.5 1
+        0.5 1   0.5 1
+
+    '''
+
     # Normalize embedding vector
     embedding = F.normalize(embedding, dim=1)
 
