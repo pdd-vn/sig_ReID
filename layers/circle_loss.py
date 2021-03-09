@@ -63,7 +63,7 @@ def pairwise_circleloss_forgery(
         real_forg: torch.Tensor,
         margin: float=0.25,
         gamma: float=128, ) -> torch.Tensor:
-    import ipdb; ipdb.set_trace()
+    
     # Normalize embedding vector
     embedding = F.normalize(embedding, dim=1)
 
@@ -92,6 +92,7 @@ def pairwise_circleloss_forgery(
     s_p = similarity_matrix[is_pos]
     s_n = similarity_matrix[is_neg]
 
+
     alpha_p = torch.clamp_min(-s_p.detach() + 1 + margin, min=0.)
     alpha_n = torch.clamp_min(s_n.detach() + margin, min=0.)
     
@@ -102,6 +103,8 @@ def pairwise_circleloss_forgery(
     logit_n = gamma * alpha_n * (s_n - delta_n)  
 
     loss = F.softplus(torch.logsumexp(logit_p, dim=0) + torch.logsumexp(logit_n, dim=0)).mean()
+
+    # import ipdb; ipdb.set_trace()
 
     return loss
 

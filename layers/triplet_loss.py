@@ -141,7 +141,10 @@ class CrossEntropyLabelSmooth(nn.Module):
         """
         psd_targets = targets
         log_probs = self.logsoftmax(inputs)
-        psd_targets = torch.zeros(log_probs.size()).scatter_(1, psd_targets.unsqueeze(1).data.cpu(), 1)
+        # try:
+        psd_targets = torch.zeros(log_probs.size()).scatter_(1, psd_targets.unsqueeze(1).data.cpu(), 1) # NOTE: add -1 to psd_targets
+        # except:
+        #     import ipdb; ipdb.set_trace()
         if self.use_gpu: psd_targets = psd_targets.cuda()
         psd_targets = (1 - self.epsilon) * psd_targets + self.epsilon / self.num_classes
         loss = (- psd_targets * log_probs).mean(0).sum()

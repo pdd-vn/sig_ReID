@@ -15,6 +15,8 @@ for index_sign, index_folder in tqdm(enumerate(list_root_folder)):
     id_folder = index_sign
     
     list_image = glob.glob(os.path.join(index_folder, "*", "*"))
+    if len(list_image) == 0:
+        print("hello")
     
     for path in list_image:
         type_sign = path.split("/")[-2]

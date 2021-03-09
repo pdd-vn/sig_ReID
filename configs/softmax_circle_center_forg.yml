@@ -67,6 +67,6 @@ TEST:
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "log/log_19012021_triplet"
+OUTPUT_DIR: "log/log_09032021_triplet"
 
 

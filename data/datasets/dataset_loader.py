@@ -131,8 +131,8 @@ def augment_image(signature):
     ratio_noise = random.random()
     # ratio_noise = 1
     wid_sig, hei_sig = signature.size
-    wid_bg = wid_sig + int(random.uniform(0., 0.7)* wid_sig)
-    hei_bg = hei_sig + int(random.uniform(0., 0.7)* hei_sig)
+    wid_bg = wid_sig + int(random.uniform(0., 0.3)* wid_sig)
+    hei_bg = hei_sig + int(random.uniform(0., 0.3)* hei_sig)
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
     # Random add symbol
@@ -141,11 +141,11 @@ def augment_image(signature):
         color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
         background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
     # Random add stamp
-    elif ratio_noise < 0.15:
+    elif ratio_noise < 0.06:
         noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
         background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
     # Random add text
-    elif ratio_noise < 0.3:
+    elif ratio_noise < 0.09:
         background = add_random_text(background)
 
     # Random overlay signature on background

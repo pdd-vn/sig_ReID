@@ -19,7 +19,8 @@ def make_data_loader(cfg):
     train_transforms = build_transforms(cfg, is_train=True)
     val_transforms = build_transforms(cfg, is_train=False)
     num_workers = cfg.DATALOADER.NUM_WORKERS
-    num_workers = 0
+    # num_workers = 0
+    print("num worker: ", num_workers)
     
     if len(cfg.DATASETS.NAMES) == 1:
         dataset = init_dataset(cfg.DATASETS.NAMES, root=cfg.DATASETS.ROOT_DIR, label_path=cfg.DATASETS.LABEL, forgery_recog=cfg.DATASETS.FORGERY_CLS)
@@ -27,7 +28,8 @@ def make_data_loader(cfg):
         # TODO: add multi dataset to train
         dataset = init_dataset(cfg.DATASETS.NAMES, root=cfg.DATASETS.ROOT_DIR, label_path=cfg.DATASETS.LABEL, forgery_recog=cfg.DATASETS.FORGERY_CLS)
     
-    num_classes = dataset.num_train_pids
+    num_classes = dataset.num_train_pids + 1
+    print("NUM CLASSES: ", num_classes)
     train_set = ImageDataset(cfg, dataset.train, train_transforms)
 
     if cfg.DATALOADER.SAMPLER == 'softmax':
