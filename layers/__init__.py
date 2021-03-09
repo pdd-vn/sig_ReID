@@ -10,6 +10,8 @@ from .triplet_loss import TripletLoss, CrossEntropyLabelSmooth
 from .center_loss import CenterLoss
 from .circle_loss import pairwise_circleloss as circle
 from .circle_loss import pairwise_circleloss_forgery as circle_forg
+from .circle_loss import pairwise_circleloss_wrong as circle_wrong
+
 
 
 
@@ -107,6 +109,7 @@ def make_loss_with_center(cfg, num_classes):    # modified by gu
                 return xent(score, target) + \
                         circle_forg(feat, target, real_forg) + \
                         cfg.SOLVER.CENTER_LOSS_WEIGHT * center_criterion(feat, target)
+            
             else:
                 return F.cross_entropy(score, target) + \
                         circle_forg(feat, target, real_forg) + \

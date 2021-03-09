@@ -202,7 +202,7 @@ class ImageDataset(Dataset):
                 img_path, pid = self.dataset[index]
                 # img, id_img = read_image(img_path)
                 img = read_image(img_path)
-                img = augment_image(img)
+                # img = augment_image(img)
                 img = self.pre_processing(img)
                 if self.transform is not None:
                     img = self.transform(img)
