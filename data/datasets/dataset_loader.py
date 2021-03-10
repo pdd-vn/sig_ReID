@@ -17,8 +17,8 @@ from imgaug import augmenters as iaa
 import imgaug as ia
 import PIL
 from PIL import Image, ImageDraw, ImageFont
-# from . import utils
-import utils
+from . import utils
+# import utils
 
 from torch.utils.data import Dataset
 import glob
@@ -213,8 +213,12 @@ class ImageDataset(Dataset):
                 img_path, pid = self.dataset[index]
                 # img, id_img = read_image(img_path)
                 img = read_image(img_path)
+<<<<<<< HEAD
                 if random.random() < 0.5:
                     img = augment_image(img)
+=======
+                # img = augment_image(img)
+>>>>>>> db7922c578cea53e73732711f94c17a879b08e78
                 img = self.pre_processing(img)
                 if self.transform is not None:
                     img = self.transform(img)

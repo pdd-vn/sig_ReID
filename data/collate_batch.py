@@ -12,7 +12,6 @@ def train_collate_fn(batch):
     if len(list(zip(*batch))) == 3:
         imgs, pids, _ = zip(*batch)
         pids = torch.tensor(pids, dtype=torch.int64)
-        print(torch.stack(imgs, dim=0).shape)
         return torch.stack(imgs, dim=0), pids
     
     elif len(list(zip(*batch))) == 4:
