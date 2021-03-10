@@ -143,20 +143,17 @@ def augment_image(signature):
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
     # Random add symbol
-    # if ratio_noise < 0.03:
-    #     print("add symbol")
-    #     noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
-    #     color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
-    #     background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
-    # # Random add stamp
-    # elif ratio_noise < 0.06:
-    #     print("add noise")
-    #     noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
-    #     background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
-    # # Random add text
-    # elif ratio_noise < 0.09:
-    #     print("add text")
-    #     background = add_random_text(background)
+    if ratio_noise < 0.02:
+        noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
+        color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
+        background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
+    # Random add stamp
+    elif ratio_noise < 0.04:
+        noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
+        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
+    # Random add text
+    elif ratio_noise < 0.06:
+        background = add_random_text(background)
 
     # Random overlay signature on background
     coord_sig = (random.randint(0, wid_bg-wid_sig), random.randint(0, hei_bg-hei_sig))
