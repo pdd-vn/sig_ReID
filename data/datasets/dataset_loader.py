@@ -7,12 +7,19 @@
 import os.path as osp
 import math
 import cv2
+
+import sys
+sys.path.append(".")
+sys.path.append("..")
+
 import numpy as np
 from imgaug import augmenters as iaa
 import imgaug as ia
 import PIL
 from PIL import Image, ImageDraw, ImageFont
-from . import utils
+# from . import utils
+import utils
+
 from torch.utils.data import Dataset
 import glob
 import random
@@ -124,9 +131,9 @@ def augment_image(signature):
         signature = signature.resize((new_wid, new_hei))
 
     aug_stt = False
-    if random.random() < 0.5:
-        signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
-        aug_stt = True
+    # if random.random() < 0.5:
+    #     signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
+    #     aug_stt = True
 
     ratio_noise = random.random()
     # ratio_noise = 1
@@ -136,25 +143,28 @@ def augment_image(signature):
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
     # Random add symbol
-    if ratio_noise < 0.03:
-        noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
-        color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
-        background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
-    # Random add stamp
-    elif ratio_noise < 0.06:
-        noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
-        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
-    # Random add text
-    elif ratio_noise < 0.09:
-        background = add_random_text(background)
+    # if ratio_noise < 0.03:
+    #     print("add symbol")
+    #     noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
+    #     color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
+    #     background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
+    # # Random add stamp
+    # elif ratio_noise < 0.06:
+    #     print("add noise")
+    #     noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
+    #     background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
+    # # Random add text
+    # elif ratio_noise < 0.09:
+    #     print("add text")
+    #     background = add_random_text(background)
 
     # Random overlay signature on background
     coord_sig = (random.randint(0, wid_bg-wid_sig), random.randint(0, hei_bg-hei_sig))
 
     if not aug_stt:
-        signature = utils.dilation_img(signature)
-        signature = utils.create_transparent_image(signature)
-        signature = utils.change_color_transparent(signature, color=((0, 30), (0,50), (10, 255)))
+        # signature = utils.dilation_img(signature)
+        # signature = utils.create_transparent_image(signature)
+        # signature = utils.change_color_transparent(signature, color=((0, 30), (0,50), (10, 255)))
         background = augment_imgaug(background)
 
     background = utils.overlay_transparent(background=background, foreground=signature, coordinate=coord_sig, ratio=(0.5, 0.9))['filled_image']
@@ -163,9 +173,11 @@ def augment_image(signature):
     return background
 
 def resize_padding(img, size=(250, 125)):
-    '''
-    resize then pad image
-    :params: img: PIL.Image
+    '''resize then pad image
+    Params: 
+        :img: PIL.Image
+    Returns:
+        :canvas: PIL.Image
     '''
     if not isinstance(img, Image.Image):
         raise TypeError("Only support PIL Image")
@@ -185,6 +197,8 @@ def resize_padding(img, size=(250, 125)):
                         int((new_h-current_h)/2)))
 
     return canvas
+
+
 class ImageDataset(Dataset):
     """ReID Dataset"""
 
@@ -202,7 +216,8 @@ class ImageDataset(Dataset):
                 img_path, pid = self.dataset[index]
                 # img, id_img = read_image(img_path)
                 img = read_image(img_path)
-                img = augment_image(img)
+                if random.random() < 0.5:
+                    img = augment_image(img)
                 img = self.pre_processing(img)
                 if self.transform is not None:
                     img = self.transform(img)
@@ -236,18 +251,21 @@ class ImageDataset(Dataset):
 
 if __name__=="__main__":
     # img = read_image("/home/pdd/Desktop/workspace/sig_ReID/test.png")
-    search_path = "/media/geneous/01D62877FB2A4900/Techainer/OCR/sig_ReID/data/sig/*/*"
+    # search_path = "/media/geneous/01D62877FB2A4900/Techainer/OCR/sig_ReID/data/sig/*/*"
+    search_path = "/media/geneous/e3359753-18af-45fb-b3d4-c5a0ced00e0c/Techainer/OCR/sig_ReID/data_collection/prepared_public_data/*/*/*"
     import glob
     for idx, path in enumerate(glob.glob(search_path)):
         img = read_image(path)
+        raw_img_cv = np.array(img)[:,:,::-1]
         # img = pre_processing(img)
         img = augment_image(img)
         print(img.size)
         img_cv = np.array(img)[:,:,::-1]
-        # cv2.namedWindow("", cv2.WINDOW_NORMAL)
+        cv2.namedWindow("", cv2.WINDOW_NORMAL)
+        cv2.imshow("raw", raw_img_cv)
         cv2.imshow("", img_cv)
         key = cv2.waitKey(0)
         if key == 27:
             break
         # img.save("pre_processing/{}.png".format(idx))
-
+        # break

@@ -6,10 +6,12 @@ from PIL import Image
 from mlchain.base import ServeModel
 from scipy.spatial import distance
 import cv2
+import glob
 
 class Sig_Ver_Model():
     def __init__(self, model_path):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         self.model = torch.load(model_path, map_location=self.device)
         self.model.eval()
 
@@ -64,15 +66,19 @@ class Sig_Ver_Model():
         img1_cv = np.array(img1)
         img2_cv = np.array(img2)
 
-        
+        cv2.imshow("1", img1_cv[:,:,::-1])
+        cv2.imshow("2", img2_cv[:,:,::-1])
 
         img1 = transform(img1).unsqueeze(0).to(self.device)
         img2 = transform(img2).unsqueeze(0).to(self.device)
         
-        feat1 = self.model(img1).detach().cpu().numpy()
-        feat2 = self.model(img2).detach().cpu().numpy()
+        feat1 = self.model(img1).detach().numpy()
+        feat2 = self.model(img2).detach().numpy()
 
         dis = distance.cosine(feat1, feat2)
+        similarity = 1 - dis
+        print("Similarity: ", similarity)
+        cv2.waitKey(0)
 
         if dis < threshold:
             return True, dis
@@ -86,26 +92,26 @@ class Sig_Ver_Model():
         input: - folder1_path, folder2_path: path to folders to verify.
                - threshold: threshold for cosine similarity evaluation.
         '''
-        f1_list = [img for img in os.listdir(folder1_path)]
-        f2_list = [img for img in os.listdir(folder2_path)]
+        f1_list = glob.glob(os.path.join(folder1_path, "*"))
+        f2_list = glob.glob(os.path.join(folder2_path, "*"))
         
-        for img1 in f1_list:
+        for img1_path in f1_list:
             print("________________________________")
-            for img2 in f2_list:
-                img1_path = os.path.join(folder1_path, img1)
-                img2_path = os.path.join(folder2_path, img2)
-
+            for img2_path in f2_list:
+                basename1 = os.path.basename(img1_path)
+                basename2 = os.path.basename(img2_path)
+                print("{}_+++_{}".format(basename1, basename2))
+                
                 verified, dis = self.verify(img1_path, img2_path)
-                if verified:
-                    print("{} = {} - dis: {}".format(img1, img2, dis))
-                else:
-                    print("{} != {} - dis: {}".format(img1, img2, dis))
+                # if verified:
+                #     print("{} = {} - dis: {}".format(img1, img2, dis))
+                # else:
+                #     print("{} != {} - dis: {}".format(img1, img2, dis))
 
 
 if __name__=="__main__":
-    # model = Sig_Ver_Model(model_path="weights/resnet50_ibn_09032021_model_100.pth")
-    model = Sig_Ver_Model(model_path='weights/model_resnet_ibn_19012021_ep60_circle.pth')
+    model = Sig_Ver_Model(model_path="weights/model_resnet_ibn_19012021_ep60_circle.pth")
 
-    path_1 = "test_signature_recognition/test_random"
-    path_2 = "test_signature_recognition/test_random"
+    path_1 = "/media/geneous/01D62877FB2A4900/Techainer/OCR/data/Seabank/data_chu_ky/labeled/crop_dataset_po/crop_dataset/3_4_5_1.jpg"
+    path_2 = "/media/geneous/01D62877FB2A4900/Techainer/OCR/data/Seabank/data_chu_ky/labeled/crop_dataset_po/crop_dataset/3_4_5_1.jpg"
     model.multiple_pair_verify(path_1, path_2)

@@ -169,7 +169,7 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
         foreground = change_color_transparent(foreground, color)
     
     if foreground.mode != "RGBA":
-        print("Bad transparent foreground")
+        print("Bad transparent foreground when overlay into the background.")
         foreground = foreground.convert("RGBA")
         
     # Overlay transparent
@@ -453,9 +453,9 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
     if random.random() < 0.1:
         aug_dilate = False
 
-    if aug_erode:
-        k_erode = random.randint(2, 3)
-        img = erosion_img(img, k_erode)
+    # if aug_erode:
+    #     k_erode = random.randint(2, 3)
+    #     img = erosion_img(img, k_erode)
 
     # Blur eroded image
     if k_blur is None:
@@ -465,6 +465,7 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
     # Compress blur image
     if k_svd is None:
         k_svd = random.randint(25, 55)
+    k_svd = 10
     shadow = svd_compress(shadow_blur, k=k_svd)
 
     # Augment and transparent image
@@ -472,16 +473,16 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
     shadow_trans = change_color_transparent(shadow_trans, color=color_shadow, smooth=True)
     # shadow_trans.show()
 
-    # Dilate raw image
+    # # Dilate raw image
     if aug_dilate:
-        k_dilate = random.randint(2, 3)
+        k_dilate = random.randint(10, 15)
         img = dilation_img(img, k_size=k_dilate)
+        
 
     # Augment and transparent image
     img = create_transparent_image(img, threshold=100)
     img = change_color_transparent(img, color=color)
 
-    
     # fill raw signature to blur background
     shadow_trans.paste(img, (0,0), img)
 
@@ -490,25 +491,16 @@ def blur_signature_std(img, k_blur=None, k_svd=None, color=[None, None, None]):
 
 
 if __name__ == "__main__":
-    # from tqdm import tqdm
-    # import glob
-    # import multiprocessing
-    # global data
-    # # data = glob.glob("/media/geneous/01D62877FB2A4900/Techainer/OCR/Fake-Data-Generator/data/hoa/*")
-    # data = glob.glob("/media/geneous/01D62877FB2A4900/Techainer/OCR/Fake-Data-Generator/data/public_signature/*/*")
-    # # for ind, path in tqdm(enumerate(sign_images), total=len(sign_images)):
-    # pool = multiprocessing.Pool(8)
-    # output = list(tqdm(
-    #     pool.imap(gen, range(len(data))), total=len(data), desc="Augmenting"))
-    # pool.terminate()
-    # for i in range(len(data)):
-    #     gen(i) 
-    img = Image.open("/media/geneous/01D62877FB2A4900/Techainer/OCR/Fake-Data-Generator/data/public_signature/00000/sig_0_0.jpg")
-    # temp = blur_signature(img, erosion_kernel_size=1, dilation_kernel_size=5, blur_kernel_size=5, num_eigenvalues=100)
-    temp = blur_signature_std(img, k_svd=20, color=[0, (0, 100), (130, 255)])
+
+    img = Image.open("/media/geneous/e3359753-18af-45fb-b3d4-c5a0ced00e0c/Techainer/OCR/sig_ReID/data_collection/prepared_public_data/40_3_4_5_15_signature/Genuine/signature_chu_ky_thu_nhat_(specimen_i).jpg")
+    img = Image.open("/media/geneous/e3359753-18af-45fb-b3d4-c5a0ced00e0c/Techainer/OCR/sig_ReID/data_collection/prepared_public_data/40_3_4_5_15_signature/Genuine/Same_signature_3_4_5_15_2.jpg")
+
+    # temp = blur_signature_std(img, k_svd=20, color=[0, (0, 100), (130, 255)])
+    img = create_transparent_image(img, threshold=130)
+    img.show()
     # temp = svd_compress(img, k=30)
 
     # temp = cv2.cvtColor(temp, cv2.COLOR_RGB2BGR)
     # cv2.imshow("",temp)
     # cv2.waitKey(0)
-    temp.show()
+    # temp.show()

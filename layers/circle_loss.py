@@ -121,8 +121,6 @@ def pairwise_circleloss_forgery(
 
     loss = F.softplus(torch.logsumexp(logit_p, dim=0) + torch.logsumexp(logit_n, dim=0)).mean()
 
-    # import ipdb; ipdb.set_trace()
-
     return loss
 
 
