@@ -23,7 +23,8 @@ for index_sign, index_folder in tqdm(enumerate(list_root_folder)):
         if type_sign == "Genuine":
             type_label = 1
         else:
-            type_label = 0
+            # type_label = 0
+            continue
 
         basename = os.path.basename(path)
         # image_label = os.path.join(current_folder, basename)

@@ -4,7 +4,7 @@ from tqdm import tqdm
 import random
 import shutil
 
-root_folder = "./data_collection/prepared_public_data"
+root_folder = "./data_collection/new_sub_set_seabank/sub_set_4"
 
 label_path_image = []
 
