@@ -3,8 +3,8 @@ MODEL:
   PRETRAIN_CHOICE: 'imagenet'
   PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
   
-  METRIC_LOSS_TYPE: 'triplet_center'
-  # METRIC_LOSS_TYPE: 'circle_center'
+  # METRIC_LOSS_TYPE: 'triplet_center'
+  METRIC_LOSS_TYPE: 'circle_center'
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'yes'
 
@@ -17,7 +17,7 @@ INPUT:
 
 DATALOADER:
   SAMPLER: 'softmax_triplet'
-  NUM_INSTANCE: 4
+  NUM_INSTANCE: 16
   NUM_WORKERS: 4
 
 DATASETS:
@@ -66,6 +66,6 @@ TEST:
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "log/log_19012021_triplet"
+OUTPUT_DIR: "log/log_15032021_circle"
 
 

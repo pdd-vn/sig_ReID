@@ -215,7 +215,7 @@ class ImageDataset(Dataset):
                 if random.random() < 0.5:
                     img = augment_image(img)
                 img = self.pre_processing(img)
-
+                
                 if self.transform is not None:
                     img = self.transform(img)
                 
