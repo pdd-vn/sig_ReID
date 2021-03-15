@@ -4,7 +4,7 @@ from tqdm import tqdm
 import random
 import shutil
 
-root_folder = "./prepared_public_data"
+root_folder = "./data_collection/prepared_public_data"
 
 label_path_image = []
 
@@ -24,7 +24,7 @@ for index_sign, index_folder in tqdm(enumerate(list_root_folder)):
     new_folder_path = os.path.join(index_folder, new_folder_name)
     os.makedirs(new_folder_path, exist_ok=True)
 
-    print(les(list_image))
+    print(len(list_image))
     for path in list_image:
         basename = os.path.basename(path)
         new_path = os.path.join(new_folder_path, basename)

@@ -169,7 +169,7 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
         foreground = change_color_transparent(foreground, color)
     
     if foreground.mode != "RGBA":
-        print("Bad transparent foreground when overlay into the background.")
+        # print("Bad transparent foreground when overlay into the background.")
         foreground = foreground.convert("RGBA")
         
     # Overlay transparent
@@ -496,8 +496,8 @@ if __name__ == "__main__":
     img = Image.open("/media/geneous/e3359753-18af-45fb-b3d4-c5a0ced00e0c/Techainer/OCR/sig_ReID/data_collection/prepared_public_data/40_3_4_5_15_signature/Genuine/Same_signature_3_4_5_15_2.jpg")
 
     # temp = blur_signature_std(img, k_svd=20, color=[0, (0, 100), (130, 255)])
-    img = create_transparent_image(img, threshold=130)
-    img.show()
+    # img = create_transparent_image(img, threshold=130)
+    # img.show()
     # temp = svd_compress(img, k=30)
 
     # temp = cv2.cvtColor(temp, cv2.COLOR_RGB2BGR)

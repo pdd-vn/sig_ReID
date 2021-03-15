@@ -24,7 +24,6 @@ from torch.utils.data import Dataset
 import glob
 import random
 
-
 corpus = [
     "Chữ ký",
     "Chữ ký thứ nhất",
@@ -57,7 +56,7 @@ aug = iaa.Sequential([
     iaa.Sometimes(0.25,
         iaa.OneOf([
             iaa.MultiplyBrightness((0.5, 1.5)),
-            iaa.CoarseDropout(0.02, size_percent=0.01, per_channel=1),
+            # iaa.CoarseDropout(0.02, size_percent=0.01, per_channel=1),
             iaa.PerspectiveTransform(scale=(0.01, 0.05), keep_size=False),
         ])
     ),
@@ -216,8 +215,10 @@ class ImageDataset(Dataset):
                 if random.random() < 0.5:
                     img = augment_image(img)
                 img = self.pre_processing(img)
+
                 if self.transform is not None:
                     img = self.transform(img)
+                
                 return img, pid, img_path
             else:
                 raise Exception("invalid dataset <Techainer>")
@@ -232,6 +233,7 @@ class ImageDataset(Dataset):
             img = self.pre_processing(img)
             if self.transform is not None:
                 img = self.transform(img)
+            
             return img, pid, img_path, real_forg
         else:
             raise Exception("invalid dataset <Techainer>")

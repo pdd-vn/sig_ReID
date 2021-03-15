@@ -37,7 +37,6 @@ class RandomIdentitySampler(Sampler):
         elif len(self.data_source[0]) == 3:
             for index, (_, pid, real_forg) in enumerate(self.data_source):
                 self.index_dic[pid].append([index, real_forg])
-        
         else:
             raise Exception("invalid source <made by pdd>")
 

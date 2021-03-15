@@ -3,7 +3,7 @@ import os
 from tqdm import tqdm
 import random
 
-root_folder = "./new_dataset/prepared_public_data"
+root_folder = "./data_collection/prepared_public_data"
 
 label_path_image = []
 
@@ -34,5 +34,5 @@ for index_sign, index_folder in tqdm(enumerate(list_root_folder)):
         label_path_image.append(label_path_and_id)
 
 random.shuffle(label_path_image)
-with open("./new_dataset/label_signature.txt", "w") as f:
+with open("./data_collection/label_signature.txt", "w") as f:
     f.writelines(label_path_image)

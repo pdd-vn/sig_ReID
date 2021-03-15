@@ -4,7 +4,7 @@
 *.PNG
 *.pth
 raw_sig
-data/
+# data/
 log*
 *.tar.gz
 *.zip
@@ -16,3 +16,5 @@ weights*
 data_real
 new_dataset*
 data_collection
+sig
+stamp

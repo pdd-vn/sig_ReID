@@ -3,8 +3,8 @@ MODEL:
   PRETRAIN_CHOICE: 'imagenet'
   PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
   
-  # METRIC_LOSS_TYPE: 'triplet_center'
-  METRIC_LOSS_TYPE: 'circle_center'
+  METRIC_LOSS_TYPE: 'triplet_center'
+  # METRIC_LOSS_TYPE: 'circle_center'
   IF_LABELSMOOTH: 'on'
   IF_WITH_CENTER: 'yes'
 
@@ -18,12 +18,12 @@ INPUT:
 DATALOADER:
   SAMPLER: 'softmax_triplet'
   NUM_INSTANCE: 4
-  NUM_WORKERS: 4
+  NUM_WORKERS: 0
 
 DATASETS:
   NAMES: 'sig'
-  ROOT_DIR: './new_dataset/prepared_public_data'
-  LABEL: './new_dataset/label_signature.txt'
+  ROOT_DIR: './data_collection/prepared_public_data'
+  LABEL: './data_collection/label_signature.txt'
   FORGERY_CLS: False
 
 
@@ -60,7 +60,7 @@ SOLVER:
   EVAL_PERIOD: 10
 
 TEST:
-  IMS_PER_BATCH: 128
+  IMS_PER_BATCH: 1
   RE_RANKING: 'no'
   WEIGHT: "path"
   NECK_FEAT: 'after'
