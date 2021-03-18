@@ -53,7 +53,7 @@ class RandomIdentitySampler(Sampler):
 
     def __iter__(self):
         batch_idxs_dict = defaultdict(list)
-
+        # import ipdb; ipdb.set_trace()
         for pid in self.pids:
             idxs = copy.deepcopy(self.index_dic[pid])
             if len(idxs) < self.num_instances:

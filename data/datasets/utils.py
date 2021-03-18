@@ -93,7 +93,7 @@ def get_coord_text(font, text, xy):
     return (left_text, top_text, width_text, height_text)
 
 
-def overlay_huge_transparent(background:PIL.Image, foreground:PIL.Image, color=None):
+def overlay_huge_transparent(background:PIL.Image, foreground:PIL.Image, color=None, ratio=None):
     ''' Overlay huge transparent image on background
     Params
     ------
@@ -104,23 +104,24 @@ def overlay_huge_transparent(background:PIL.Image, foreground:PIL.Image, color=N
     -------
     :image: PIL.Image
     '''
+
     bg_w, bg_h = background.size
 
     cur_fore_h, cur_fore_w = foreground.size
     if random.uniform(0, 1) < 0.5:  # big
-        ratio = random.uniform(3, 4)
+        ratio_size = random.uniform(3, 4)
     else:
-        ratio = random.uniform(0.9, 2)
+        ratio_size = random.uniform(0.9, 2)
 
-    new_fore_h = int(ratio * bg_h)
+    new_fore_h = int(ratio_size * bg_h)
     new_fore_w = int((new_fore_h/cur_fore_h) * cur_fore_w)
     foreground = foreground.resize((new_fore_w, new_fore_h))    
 
     x = random.randint(int(bg_w/2 - new_fore_w), int(bg_w/2))
     y = random.randint(int(bg_h/2 - new_fore_h), int(bg_h/2))
-
+    
     background = overlay_transparent(background=background, foreground=foreground,  \
-                                    coordinate=(x,y), color=color)['filled_image']
+                                    coordinate=(x,y), color=color, ratio=ratio)['filled_image']
 
     return background
 
@@ -139,7 +140,7 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
     -------
     :image: PIL.Image
     '''
-    
+    print("ratio after", ratio)
     org_background = background.copy()
     if org_background.mode == "P":
         org_background = org_background.conver("RGB")
@@ -181,7 +182,7 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
     elif isinstance(ratio, float):
         pass
     else:
-        raise ValueError("ratio blend must be None or float or tuple, get {}".format(type(ratio)))
+        raise ValueError("ratio blend must be None or float or tuple, get type {}".format(type(ratio)))
 
     background = Image.blend(org_background, background, ratio)
 

@@ -3,7 +3,7 @@ import os
 from tqdm import tqdm
 import random
 
-root_folder = "./data_collection/prepared_public_data"
+root_folder = "./data_collection/data_ky_lai"
 
 label_path_image = []
 

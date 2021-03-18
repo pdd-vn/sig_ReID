@@ -17,12 +17,12 @@ INPUT:
 
 DATALOADER:
   SAMPLER: 'softmax_triplet'
-  NUM_INSTANCE: 16
-  NUM_WORKERS: 4
+  NUM_INSTANCE: 6
+  NUM_WORKERS: 2
 
 DATASETS:
   NAMES: 'sig'
-  ROOT_DIR: './data_collection/prepared_public_data'
+  ROOT_DIR: './data_collection/data_ky_lai'
   LABEL: './data_collection/label_signature.txt'
   FORGERY_CLS: False
 
@@ -46,7 +46,7 @@ SOLVER:
   BIAS_LR_FACTOR: 1
   WEIGHT_DECAY: 0.0005
   WEIGHT_DECAY_BIAS: 0.0005
-  IMS_PER_BATCH: 128
+  IMS_PER_BATCH: 16
 
   STEPS: [40, 70]
   GAMMA: 0.1
@@ -60,7 +60,7 @@ SOLVER:
   EVAL_PERIOD: 10
 
 TEST:
-  IMS_PER_BATCH: 64
+  IMS_PER_BATCH: 12
   RE_RANKING: 'no'
   WEIGHT: "path"
   NECK_FEAT: 'after'

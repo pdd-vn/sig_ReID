@@ -24,6 +24,8 @@ from torch.utils.data import Dataset
 import glob
 import random
 
+from wand.image import Image as wandImage
+
 corpus = [
     "Chữ ký",
     "Chữ ký thứ nhất",
@@ -43,8 +45,8 @@ aug = iaa.Sequential([
         iaa.OneOf([
             iaa.AverageBlur(k=(3, 9)),
             iaa.GaussianBlur(sigma=(0., 1.5)),
-            iaa.MedianBlur(k=(3, 7)),
-            iaa.MotionBlur(k=(3, 9)),
+            iaa.MedianBlur(k=(3, 5)),
+            iaa.MotionBlur(k=(3, 5)),
             # iaa.imgcorruptlike.DefocusBlur(severity=(1, 3)),
             iaa.AveragePooling((1, 3)),
             # iaa.imgcorruptlike.GlassBlur(severity=(1, 2)),
@@ -61,8 +63,12 @@ aug = iaa.Sequential([
         ])
     ),
     iaa.Sometimes(0.2,
-        iaa.ChangeColorTemperature((5000, 11000)),
-        iaa.JpegCompression(compression=(50, 99))
+        iaa.OneOf([
+            iaa.ChangeColorTemperature((5000, 11000)),
+            iaa.JpegCompression(compression=(50, 99)),
+            iaa.imgcorruptlike.Contrast(severity=1),
+            iaa.LogContrast(gain=(0.7, 1.3)),
+        ])
     )
 ])
 
@@ -114,6 +120,63 @@ def augment_imgaug(image):
     return image
 
 
+'''Version 1'''
+# def augment_image(signature):
+#     ''' Augment signature
+#     Params
+#         :image: PIL.Image
+#     Return
+#         :image: pIL.Image - augmented image
+#     '''
+
+#     w_sig, h_sig = signature.size
+#     if w_sig > 600 or h_sig > 600:
+#         ratio = h_sig/w_sig
+#         new_wid = 600
+#         new_hei = int(ratio* new_wid)
+#         signature = signature.resize((new_wid, new_hei))
+
+#     aug_stt = False
+#     # if random.random() < 0.5:
+#     #     signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
+#     #     aug_stt = True
+
+#     ratio_noise = random.random()
+#     # ratio_noise = 1
+#     wid_sig, hei_sig = signature.size
+#     wid_bg = wid_sig + int(random.uniform(0., 0.3)* wid_sig)
+#     hei_bg = hei_sig + int(random.uniform(0., 0.3)* hei_sig)
+#     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
+
+#     # Random add symbol
+#     if ratio_noise < 0.02:
+#         noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
+#         color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
+#         background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
+#     # Random add stamp
+#     elif ratio_noise < 0.04:
+#         noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
+#         background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
+#     # Random add text
+#     elif ratio_noise < 0.06:
+#         background = add_random_text(background)
+
+#     # Random overlay signature on background
+#     coord_sig = (random.randint(0, wid_bg-wid_sig), random.randint(0, hei_bg-hei_sig))
+
+#     if not aug_stt:
+#         # signature = utils.dilation_img(signature)
+#         # signature = utils.create_transparent_image(signature)
+#         # signature = utils.change_color_transparent(signature, color=((0, 30), (0,50), (10, 255)))
+#         background = augment_imgaug(background)
+
+#     background = utils.overlay_transparent(background=background, foreground=signature, coordinate=coord_sig, ratio=(0.5, 0.9))['filled_image']
+
+#     background = resize_padding(background)
+#     return background
+
+
+'''Version 2'''
 def augment_image(signature):
     ''' Augment signature
     Params
@@ -129,11 +192,17 @@ def augment_image(signature):
         new_hei = int(ratio* new_wid)
         signature = signature.resize((new_wid, new_hei))
 
-    aug_stt = False
-    # if random.random() < 0.5:
-    #     signature = utils.blur_signature_std(signature, k_blur=(2, 3), k_svd=(30, 65), color=[(0, 50), (0, 100), (0, 255)])
-    #     aug_stt = True
+    # random distort signature
+    if random.random() < 0.1:
+        ratio_distort = random.uniform(0.02, 0.1)
+        array_img = np.array(signature)
+        wand_image = wandImage.from_array(array_img)
+        wand_image.virtual_pixel = 'background'
+        wand_image.distort('barrel', (ratio_distort, 0., 0., 1.0))
 
+        img_cv = np.array(wand_image)
+        signature = Image.fromarray(img_cv)
+        
     ratio_noise = random.random()
     # ratio_noise = 1
     wid_sig, hei_sig = signature.size
@@ -141,32 +210,32 @@ def augment_image(signature):
     hei_bg = hei_sig + int(random.uniform(0., 0.3)* hei_sig)
     background = Image.new('RGB', (wid_bg, hei_bg), color=(255,255,255))
 
+    # Random overlay signature on background
+    coord_sig = (random.randint(0, wid_bg-wid_sig), random.randint(0, hei_bg-hei_sig))
+    background.paste(signature, coord_sig)
+
     # Random add symbol
     if ratio_noise < 0.02:
         noise_symbol = Image.open(random.choice(symbol_list)).convert("RGBA")
         color_noise = (random.randint(200, 255), random.randint(0, 100), random.randint(0, 50))
-        background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise)
+        ratio_blend_noise = random.uniform(0.3, 0.7)
+        background = utils.overlay_huge_transparent(background=background, foreground=noise_symbol, color=color_noise, ratio=ratio_blend_noise)
     # Random add stamp
-    elif ratio_noise < 0.04:
-        noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
-        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp)
-    # Random add text
     elif ratio_noise < 0.06:
+        noise_stamp = Image.open(random.choice(stamp_list)).convert("RGBA")
+        ratio_blend_stamp = random.uniform(0.3, 0.5)
+        background = utils.overlay_huge_transparent(background=background, foreground=noise_stamp, ratio=ratio_blend_stamp)
+    # Random add text
+    elif ratio_noise < 0.1:
         background = add_random_text(background)
 
-    # Random overlay signature on background
-    coord_sig = (random.randint(0, wid_bg-wid_sig), random.randint(0, hei_bg-hei_sig))
-
-    if not aug_stt:
-        # signature = utils.dilation_img(signature)
-        # signature = utils.create_transparent_image(signature)
-        # signature = utils.change_color_transparent(signature, color=((0, 30), (0,50), (10, 255)))
-        background = augment_imgaug(background)
-
-    background = utils.overlay_transparent(background=background, foreground=signature, coordinate=coord_sig, ratio=(0.5, 0.9))['filled_image']
+    if random.random() < 0.8:
+        background = augment_imgaug(background)    
 
     background = resize_padding(background)
     return background
+
+
 
 def resize_padding(img, size=(250, 125)):
     '''resize then pad image
@@ -215,7 +284,7 @@ class ImageDataset(Dataset):
                 if random.random() < 0.5:
                     img = augment_image(img)
                 img = self.pre_processing(img)
-                
+                img.save("debugs/{}_{}.jpg".format(index, random.random()))
                 if self.transform is not None:
                     img = self.transform(img)
                 
