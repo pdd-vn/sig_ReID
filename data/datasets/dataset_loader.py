@@ -66,7 +66,7 @@ aug = iaa.Sequential([
         iaa.OneOf([
             iaa.ChangeColorTemperature((5000, 11000)),
             iaa.JpegCompression(compression=(50, 99)),
-            iaa.imgcorruptlike.Contrast(severity=1),
+            # iaa.imgcorruptlike.Contrast(severity=1),
             iaa.LogContrast(gain=(0.7, 1.3)),
         ])
     )
