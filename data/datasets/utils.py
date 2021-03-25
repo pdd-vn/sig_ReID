@@ -140,7 +140,6 @@ def overlay_transparent(background:PIL.Image, foreground:PIL.Image, coordinate=N
     -------
     :image: PIL.Image
     '''
-    print("ratio after", ratio)
     org_background = background.copy()
     if org_background.mode == "P":
         org_background = org_background.conver("RGB")
