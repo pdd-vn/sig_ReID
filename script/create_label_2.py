@@ -4,7 +4,7 @@ from tqdm import tqdm
 import random
 import shutil
 
-root_folder = "./data_collection/new_sub_set_seabank/sub_set_4"
+root_folder = "./dataset"
 
 label_path_image = []
 
@@ -15,7 +15,7 @@ for index_sign, index_folder in tqdm(enumerate(list_root_folder)):
 
     id_folder = index_sign
     
-    list_image = glob.glob(os.path.join(index_folder, "*.jpg"))
+    list_image = glob.glob(os.path.join(index_folder, "*.jpg")) + glob.glob(os.path.join(index_folder, "*.png"))
     
     if len(list_image) == 0:
         continue

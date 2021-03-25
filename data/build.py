@@ -28,7 +28,7 @@ def make_data_loader(cfg):
         # TODO: add multi dataset to train
         dataset = init_dataset(cfg.DATASETS.NAMES, root=cfg.DATASETS.ROOT_DIR, label_path=cfg.DATASETS.LABEL, forgery_recog=cfg.DATASETS.FORGERY_CLS)
     
-    num_classes = dataset.num_train_pids + 1
+    num_classes = dataset.num_train_pids + 10
     print("NUM CLASSES: ", num_classes)
     train_set = ImageDataset(cfg, dataset.train, train_transforms)
 

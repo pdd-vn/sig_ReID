@@ -2,6 +2,7 @@ MODEL:
   NAME: "resnet50_ibn_a"
   PRETRAIN_CHOICE: 'imagenet'
   PRETRAIN_PATH: 'weights/r50_ibn_a.pth'
+  # PRETRAIN_PATH: 'weights/resnet50_ibn_a_model_60.pth'
   
   # METRIC_LOSS_TYPE: 'triplet_center'
   METRIC_LOSS_TYPE: 'circle_center'
@@ -22,8 +23,8 @@ DATALOADER:
 
 DATASETS:
   NAMES: 'sig'
-  ROOT_DIR: './data_collection/data_ky_lai'
-  LABEL: './data_collection/label_signature.txt'
+  ROOT_DIR: './dataset'
+  LABEL: './label_signature.txt'
   FORGERY_CLS: False
 
 
@@ -66,6 +67,6 @@ TEST:
   NECK_FEAT: 'after'
   FEAT_NORM: 'yes'
 
-OUTPUT_DIR: "log/log_15032021_circle"
+OUTPUT_DIR: "log/log_25032021_circle"
 
 

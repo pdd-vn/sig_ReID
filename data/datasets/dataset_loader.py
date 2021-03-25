@@ -194,7 +194,7 @@ def augment_image(signature):
 
     # random distort signature
     if random.random() < 0.1:
-        ratio_distort = random.uniform(0.02, 0.1)
+        ratio_distort = random.uniform(0.02, 0.05)
         array_img = np.array(signature)
         wand_image = wandImage.from_array(array_img)
         wand_image.virtual_pixel = 'background'
@@ -284,7 +284,7 @@ class ImageDataset(Dataset):
                 if random.random() < 0.5:
                     img = augment_image(img)
                 img = self.pre_processing(img)
-                img.save("debugs/{}_{}.jpg".format(index, random.random()))
+    
                 if self.transform is not None:
                     img = self.transform(img)
                 

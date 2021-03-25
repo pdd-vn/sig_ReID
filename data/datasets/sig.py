@@ -25,14 +25,26 @@ class sig(BaseImageDataset):
         # self.dataset_dir = os.path.join(root, self.dataset_dir)
         self.dataset_dir = root
 
+        # if not forgery_recog:
+        #     self.train, self.gallery, self.query = self.create_dataset(self.dataset_dir)
+
+        #     self.num_train_pids, self.num_train_imgs = self.get_imagedata_info(self.train)
+        #     self.num_query_pids, self.num_query_imgs = self.get_imagedata_info(self.query)
+        #     self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
+
+        # else:
+        #     if not os.path.exists(label_path):
+        #         raise Exception("Label file {} is not existed. Please check !!")
+        #     with open(label_path, "r") as f:
+        #         label_data = f.readlines()
+            
+        #     self.train, self.gallery, self.query = self.create_dataset_with_forgery(self.dataset_dir, label_data)
+
+        #     self.num_train_pids, self.num_train_imgs = self.get_imagedata_info(self.train)
+        #     self.num_query_pids, self.num_query_imgs = self.get_imagedata_info(self.query)
+        #     self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
+
         if not forgery_recog:
-            self.train, self.gallery, self.query = self.create_dataset(self.dataset_dir)
-
-            self.num_train_pids, self.num_train_imgs = self.get_imagedata_info(self.train)
-            self.num_query_pids, self.num_query_imgs = self.get_imagedata_info(self.query)
-            self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
-
-        else:
             if not os.path.exists(label_path):
                 raise Exception("Label file {} is not existed. Please check !!")
             with open(label_path, "r") as f:
@@ -44,16 +56,25 @@ class sig(BaseImageDataset):
             self.num_query_pids, self.num_query_imgs = self.get_imagedata_info(self.query)
             self.num_gallery_pids, self.num_gallery_imgs = self.get_imagedata_info(self.gallery)
 
+
     
     def create_dataset_with_forgery(self, root, label_data, train_ratio=0.7, gallery_ratio=0.3):
         dict_id = {}
         for line in label_data:
-            image_name, idx, real = line.strip().split(" ")
-            image_path = os.path.join(root, image_name)
-            if idx not in dict_id.keys():
-                dict_id.update({idx: [(image_path, int(idx), int(real))]})
+            result = line.strip().split(" ")
+            if len(result) == 3:
+                image_name, idx, real = line.strip().split(" ")
             else:
-                dict_id[idx].extend([(image_path, int(idx), int(real))])
+                *image_name_sub, idx, real = line.strip().split(" ")
+                image_name = " ".join(list(image_name_sub))
+
+
+            image_path = os.path.join(root, image_name)
+
+            if idx not in dict_id.keys():
+                dict_id.update({idx: [(image_path, int(idx))]})
+            else:
+                dict_id[idx].extend([(image_path, int(idx))])
             
         train = []
         gallery = []
@@ -70,7 +91,6 @@ class sig(BaseImageDataset):
             gallery.extend(sub_gallery)
             query.extend(sub_query)
         
-        # print(train)
         return train, gallery, query
 
 

@@ -109,19 +109,19 @@ def train(cfg):
             print('Path to the checkpoint of center_param:', path_to_center_param)
             path_to_optimizer_center = cfg.MODEL.PRETRAIN_PATH.replace('model', 'optimizer_center')
             print('Path to the checkpoint of optimizer_center:', path_to_optimizer_center)
-            model.load_state_dict(torch.load(cfg.MODEL.PRETRAIN_PATH))
-            # state_dict = torch.load("pretrained_13012021.pth")
-            # model = load_my_statedict(model, state_dict)
-            # # model.load_state_dict(torch.load("pretrained_13012021.pth"))
-            optimizer.load_state_dict(torch.load(path_to_optimizer))
-            center_criterion.load_state_dict(torch.load(path_to_center_param))
-            optimizer_center.load_state_dict(torch.load(path_to_optimizer_center))
+            # model.load_state_dict(torch.load(cfg.MODEL.PRETRAIN_PATH))
+            state_dict = torch.load("weights/state_dict.pth")
+            model = load_my_statedict(model, state_dict)
+            # model.load_state_dict(torch.load("pretrained_13012021.pth"))
+            # optimizer.load_state_dict(torch.load(path_to_optimizer))
+            # center_criterion.load_state_dict(torch.load(path_to_center_param))
+            # optimizer_center.load_state_dict(torch.load(path_to_optimizer_center))
             scheduler = WarmupMultiStepLR(optimizer, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,
                                           cfg.SOLVER.WARMUP_ITERS, cfg.SOLVER.WARMUP_METHOD, start_epoch)
         elif cfg.MODEL.PRETRAIN_CHOICE == 'imagenet':
             start_epoch = 0
-            # state_dict = torch.load("pretrained_13012021.pth")
-            # model = load_my_statedict(model, state_dict)
+            state_dict = torch.load("weights/state_dict.pth")
+            model = load_my_statedict(model, state_dict)
             scheduler = WarmupMultiStepLR(optimizer, cfg.SOLVER.STEPS, cfg.SOLVER.GAMMA, cfg.SOLVER.WARMUP_FACTOR,
                                           cfg.SOLVER.WARMUP_ITERS, cfg.SOLVER.WARMUP_METHOD)
         else:

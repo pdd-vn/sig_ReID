@@ -18,7 +18,8 @@ class BaseDataset(object):
             for _, pid in data:
                 pids += [pid]
             pids = set(pids)
-            num_pids = len(pids)
+            # num_pids = len(pids)
+            num_pids = max(pids)
             num_imgs = len(data)
             return num_pids, num_imgs
         
@@ -27,8 +28,9 @@ class BaseDataset(object):
             for path, pid, real_forg in data:
                 pids += [pid]
             pids = set(pids)
-            num_pids = len(pids)
+            # num_pids = len(pids)
             num_imgs = len(data)
+            num_pids = max(num_pids)
             return num_pids, num_imgs
         
         else:
